@@ -1,0 +1,24 @@
+@import 'style-min';
+
+.vote{
+    &__button{
+        background: #d75a4a;
+        border: 1px solid #e7f3ef;
+        color: #fff;
+        border-radius: 26px;
+        padding: 8px 15px;
+        text-align: center;
+        width: 100%;
+        text-transform: uppercase;
+        font-weight: 600;
+        cursor: pointer;
+    }
+    
+    &__number{
+        text-align: center;
+    }
+
+    &__count{
+        font-weight: 600;
+    }
+}
