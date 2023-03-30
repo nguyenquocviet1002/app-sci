@@ -9,6 +9,8 @@
         padding: 8px 15px;
         text-align: center;
         width: 100%;
+        display: block;
+        margin: auto;
         text-transform: uppercase;
         font-weight: 600;
         cursor: pointer;
@@ -21,4 +23,64 @@
     &__count{
         font-weight: 600;
     }
+}
+
+.modal__vote{
+    .modal-box{
+        min-width: 350px;
+    }
+    &Head{
+        border-bottom: none;
+    }
+    &Control{
+        display: flex;
+        flex-direction: column;
+        input{
+            width: 300px;
+            line-height: 1.25rem;
+            padding: 0.7rem;
+            background-color: #f9fafb;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            outline: 1px solid transparent;
+            &.err{
+                outline-color: red;
+                border-color: red;
+            }
+        }
+        .err__type{
+            display: block;
+            color: red;
+            font-size: 14px;
+        }
+    }
+    .btn__submitVote{
+        display: block;
+        background: #d75a4a;
+        border: 1px solid #e7f3ef;
+        color: #fff;
+        border-radius: 26px;
+        padding: 8px 15px;
+        text-align: center;
+        text-transform: uppercase;
+        font-weight: 600;
+        cursor: pointer;
+        margin: 10px auto;
+    }
+    img{
+        width: 80px;
+        height: auto;
+        display: flex;
+        margin: auto;
+    }
+    .notify{
+        margin: 20px 0;
+        font-size: 21px;
+        text-align: center;
+    }
+}
+
+.disabled{
+    filter: grayscale(1);
+    pointer-events: none;
 }
