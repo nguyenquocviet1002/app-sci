@@ -40,7 +40,7 @@ const Navbar = () => {
         <div className="container">
           <div className={navbarStyles['nav']}>
             <div className={navbarStyles['navUserName']}>
-              <img src="http://localhost:3000/images/profile.png" alt="" />
+              <img src={`${process.env.PUBLIC_URL}/images/profile.png`} alt="" />
               <p>{user.username}</p>
             </div>
             <div className={navbarStyles['navButton']}>

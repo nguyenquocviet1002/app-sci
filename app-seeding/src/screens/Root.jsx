@@ -1,5 +1,5 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
 import ScreensLogin from './Login/Login';
 import ScreenDashboard from './Dashboard/Dashboard';
@@ -9,13 +9,16 @@ import LeadBooking from '../components/Dasboard/LeadBooking/Booking';
 import Expense from '../components/Dasboard/Expense/Expense';
 
 const ScreensRoot = () => {
-  const storage = localStorage.getItem('token');
+  const [storage, setStorage] = useState('');
+  useEffect(() => {
+    setStorage(localStorage.getItem('token'));
+  }, []);
 
   return (
-    <Router>
+    <Router basename="/cp/app-seeding">
       <Routes>
-        <Route index element={storage ? <ScreenDashboard /> : <ScreensLogin />} />
-        <Route path="login" element={<ScreensLogin />} />
+        <Route index element={storage ? <Navigate to="/dashboard" replace /> : <ScreensLogin />} />
+        <Route path="login" element={storage ? <Navigate to="/dashboard" replace /> : <ScreensLogin />} />
         <Route path="dashboard" element={<ScreenDashboard />}>
           <Route path="lead" element={<Lead />} />
           <Route path="booking" element={<Booking />} />

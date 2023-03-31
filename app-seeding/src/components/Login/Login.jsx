@@ -57,7 +57,7 @@ const Login = () => {
           </button>
         </div>
         <div className={loginStyles['signin__right']}>
-          <img className={loginStyles['signin__img']} src="/images/image.jpg" alt="" />
+          <img className={loginStyles['signin__img']} src={`${process.env.PUBLIC_URL}/images/image.jpg`} alt="" />
         </div>
       </div>
     </div>
