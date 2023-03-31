@@ -40,12 +40,12 @@ const Navbar = () => {
         <div className="container">
           <div className={navbarStyles['nav']}>
             <div className={navbarStyles['navUserName']}>
-              <img src="./images/profile.png" alt="" />
+              <img src="http://localhost:3000/images/profile.png" alt="" />
               <p>{user.username}</p>
             </div>
             <div className={navbarStyles['navButton']}>
               <button
-                className="button navButton__changePassword modal-btn btn"
+                className={`button ${navbarStyles['navButton__changePassword']} modal-btn btn`}
                 data-modal="modal-opacity-changePass"
                 onClick={() => setShow(true)}
               >

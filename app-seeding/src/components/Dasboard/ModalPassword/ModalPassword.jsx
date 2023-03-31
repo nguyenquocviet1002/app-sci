@@ -39,7 +39,7 @@ const ModalPassword = (props) => {
         </div>
         <div className="modal-body">
           <div className="modalFormPass">
-            <div className="modalFormPass__input">
+            <div className={styleModalPassword['modalFormPass__input']}>
               <input
                 type="password"
                 name="passwordNew"
@@ -52,7 +52,7 @@ const ModalPassword = (props) => {
                 }}
               />
             </div>
-            <div className="modalFormPass__input">
+            <div className={styleModalPassword['modalFormPass__input']}>
               <input
                 type="password"
                 name="passwordNewRetype"
@@ -66,8 +66,8 @@ const ModalPassword = (props) => {
               />
             </div>
           </div>
-          <div className="modal__line"></div>
-          <div className="modalFooter">
+          <div className={styleModalPassword['modal__line']}></div>
+          <div className={styleModalPassword['modalFooter']}>
             <button className="button modalFooter__search" onClick={() => update()}>
               Đổi mật khẩu
             </button>

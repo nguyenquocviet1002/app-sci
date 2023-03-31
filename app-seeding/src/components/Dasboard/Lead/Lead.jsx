@@ -18,19 +18,6 @@ const Lead = () => {
     user_seeding: '',
   });
 
-  const token = localStorage.getItem('token');
-  setInfo({ ...info, token: token });
-
-  useEffect(() => {
-    getLead(info)
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, [info]);
-
   return (
     <>
       <>Lead</>
