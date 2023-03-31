@@ -1,88 +1,75 @@
 const baseURL = 'https://app.scigroupvn.com/vote/public/api';
-const ipLocal = '222.252.21.7';
 
-const idUser = document.getElementsByClassName('vote__button')[0].getAttribute('data-id');
+const getVotes = async (id) => {
+    const response = await fetch(`${baseURL}/get-votes/${id}`);
+    const data = await response.json();
+    return data;
+}
+
+const createVotes = async (info) => {
+    const response = await fetch(`${baseURL}/create-votes`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(info)
+    });
+    const data = await response.json();
+    return data;
+}
+
+const updateVotes = async (id, info) => {
+    const response = await fetch(`${baseURL}/update-votes/${id}`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(info)
+    });
+    const data = response.json();
+    return data;
+}
+
+const getUserVotes = async () => {
+    const response = await fetch(`${baseURL}/get-uservotes`);
+    const data = await response.json();
+    return data;
+}
+
+const createUserVotes = async (info) => {
+    const response = await fetch(`${baseURL}/create-uservotes`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(info)
+    });
+    const data = await response.json();
+    return data;
+}
+
+const elmButtonVote = document.getElementsByClassName('vote__button')[0];
+const elmSetCount = document.getElementsByClassName('vote__count')[0];
+
+const idUser = elmButtonVote.getAttribute('data-id');
 const dataUser = [];
+const ipLocal = '222.252.21.7';
 let countVote = 0;
 
-const submitVote = async () => {
-    const phoneElm = document.getElementById('phone');
-    const errType = document.getElementsByClassName('err__type');
-    const phoneN = document.getElementById('phone').value;
+const disabledBtnVote = () => {
+    elmButtonVote.classList.add('disabled');
+    elmButtonVote.innerHTML = 'Đã bình chọn';
+}
 
-    const phone_regex = /((09|03|07|08|05)+([0-9]{8})\b)/g;
-    if (phoneN !== '') {
-        if (phone_regex.test(phoneN) == false) {
-            phoneElm.classList.add('err');
-            errType[0].innerHTML = 'Số điện thoại sai định dạng'
-        } else {
-            const dataVotes = async () => {
-                return await fetch(`${baseURL}/get-uservotes`)
-                    .then(res => res.json())
-                    .then(data => (data))
-            }
-            const dataNew = await dataVotes();
-            const checkUser = dataNew.filter(item => (item.userid === idUser));
-            const checkPhone = checkUser.filter(item => (item.phone === phoneN));
-            const checkIp = checkUser.filter(item => (item.ip === ipLocal));
-            if (checkPhone.length > 0 || checkIp.length > 0) {
-                document.getElementsByClassName('vote__button')[0].classList.add('disabled');
-                document.getElementsByClassName('vote__button')[0].innerHTML = 'Đã bình chọn';
-                localStorage.setItem('tokenUser', idUser);
-                closeForm();
-                document.getElementsByTagName('body')[0].insertAdjacentHTML('beforeend', formWarning());
-                setTimeout(() => {
-                    document.getElementById('modal-warning').remove()
-                }, 3000)
-            }
-            else {
-                phoneElm.classList.remove('err');
-                const dataVote = {
-                    phone: phoneN,
-                    ip: ipLocal,
-                    userid: idUser
-                }
-                await fetch(`${baseURL}/create-uservotes`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(dataVote)
-                })
-                    .then(res => res.json())
-                    .then(() => {
-                        document.getElementsByTagName('body')[0].insertAdjacentHTML('beforeend', formSuccess());
-                        document.getElementsByClassName('vote__button')[0].classList.add('disabled');
-                        document.getElementsByClassName('vote__button')[0].innerHTML = 'Đã bình chọn';
-                        localStorage.setItem('tokenUser', idUser)
-                        setTimeout(() => {
-                            document.getElementById('modal-pop').remove()
-                            document.getElementById('modal-success').remove()
-                        }, 3000)
-                })
-                countVote += 1;
-                document.getElementsByClassName('vote__count')[0].innerHTML = countVote;
-                const bodyVote = {
-                    vote: countVote
-                }
-                await fetch(`${baseURL}/update-votes/${idUser}`, {
-                    method: "PUT",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(bodyVote)
-                })
-            }
-        }
-    } else {
-        phoneElm.classList.add('err');
-        errType[0].innerHTML = 'Nhập số điện thoại để bình chọn'
-    }
+const showNotification = (html) => {
+    document.getElementsByTagName('body')[0].insertAdjacentHTML('beforeend', html);
+}
+
+const errorForm = (text) => {
+    document.getElementById('phone').classList.add('err');
+    document.getElementsByClassName('err__type')[0].innerHTML = text;
 }
 
 const closeForm = () => {
     document.getElementById('modal-pop').remove()
 }
+
 
 const formInput = () => {
     return `
@@ -138,26 +125,85 @@ const formWarning = () => {
     `
 };
 
+const submitVote = async () => {
+    const phoneValue = document.getElementById('phone').value;
+    const phone_regex = /((09|03|07|08|05)+([0-9]{8})\b)/g;
 
-document.getElementsByClassName('vote__button')[0].addEventListener('click', () => {
-    document.getElementsByTagName('body')[0].insertAdjacentHTML('beforeend', formInput());
+    if (phoneValue !== '') {
+        if (phone_regex.test(phoneValue) == false) {
+            errorForm('Số điện thoại sai định dạng');
+        } else {
+            try {
+                const dataUserVote = await getUserVotes();
+                const checkUser = dataUserVote.filter(item => (item.userid === idUser));
+                const checkPhone = checkUser.filter(item => (item.phone === phoneValue));
+                const checkIp = checkUser.filter(item => (item.ip === ipLocal));
+                if (checkPhone.length > 0 || checkIp.length > 0) {
+                    localStorage.setItem('tokenUser', idUser);
+                    disabledBtnVote();
+                    closeForm();
+                    showNotification(formWarning());
+                    setTimeout(() => {
+                        document.getElementById('modal-warning').remove()
+                    }, 2000)
+                }
+                else {
+                    const dataVote = {
+                        phone: phoneValue,
+                        ip: ipLocal,
+                        userid: idUser
+                    }
+                    await createUserVotes(dataVote);
+                    disabledBtnVote();
+                    showNotification(formSuccess());
+                    localStorage.setItem('tokenUser', idUser)
+                    setTimeout(() => {
+                        document.getElementById('modal-pop').remove()
+                        document.getElementById('modal-success').remove()
+                    }, 2000);
+
+                    countVote += 1;
+                    elmSetCount.innerHTML = countVote;
+                    const votePlus = {
+                        vote: countVote
+                    }
+                    updateVotes(idUser, votePlus);
+                }
+            } catch (e) {
+                console.log(e)
+            }
+        }
+    } else {
+        errorForm('Nhập số điện thoại để bình chọn');
+    }
+}
+
+elmButtonVote.addEventListener('click', () => {
+    showNotification(formInput());
     document.getElementById('phone').addEventListener('focus', () => {
         document.getElementById('phone').classList.remove('err');
     })
 })
 
-
 window.onload = async () => {
-    await fetch(`${baseURL}/get-votes/${idUser}`)
-        .then(res => res.json())
-        .then(data => (dataUser.push(data)))
-    document.getElementsByClassName('vote__button')[0].classList.remove('disabled');
-    countVote = Number(dataUser[0].vote);
-    document.getElementsByClassName('vote__count')[0].innerHTML = countVote;
-    const checkVote = localStorage.getItem('tokenUser');
-    if(checkVote === dataUser[0].userid){
-        document.getElementsByClassName('vote__button')[0].classList.add('disabled');
-        document.getElementsByClassName('vote__button')[0].innerHTML = 'Đã bình chọn';
+    try {
+        const data = await getVotes(idUser);
+        dataUser.push(data);
+    } catch (e) {
+        const info = {
+            userid: idUser,
+            vote: 0
+        }
+        const data = await createVotes(info);
+        dataUser.push(data.data);
+    } finally {
+        elmButtonVote.classList.remove('disabled');
+        countVote = Number(dataUser[0].vote);
+        elmSetCount.innerHTML = countVote;
+        const checkVote = localStorage.getItem('tokenUser');
+        if (checkVote === dataUser[0].userid) {
+            disabledBtnVote();
+        }
     }
 }
 
