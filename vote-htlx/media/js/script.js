@@ -87,7 +87,7 @@ const formInput = () => {
                         <input type="hidden" value="${ipLocal}" id="ipLocal" />
                         <input type="hidden" value="${idUser}" id="idUser" />
                     </div>
-                    <button type="button" class="btn__submitVote" onclick={submitVote()}>Bình chọn</button>
+                    <button type="button" class="btn__submitVote" onclick={submitVote()}>Xác nhận bình chọn</button>
                 </div>
             </div>
         </div>
