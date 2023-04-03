@@ -52,6 +52,8 @@ const getIP = async () => {
 
 const elmButtonVote = document.getElementsByClassName('vote__button')[0];
 const elmSetCount = document.getElementsByClassName('vote__count')[0];
+const elmVoted = document.getElementsByClassName('err__voted')[0];
+
 
 const idUser = elmButtonVote.getAttribute('data-id');
 const dataUser = [];
@@ -156,6 +158,7 @@ const submitVote = async () => {
                 await createUserVotes(dataVote);
                 disabledBtnVote();
                 showNotification(formSuccess());
+                elmVoted.setAttribute('style', 'display: block');
                 localStorage.setItem('tokenUser', idUser)
                 setTimeout(() => {
                     document.getElementById('modal-pop').remove()
@@ -199,11 +202,13 @@ window.onload = async () => {
         const { ip } = await getIP();
         ipLocal = String(ip);
         elmButtonVote.classList.remove('disabled');
+        elmVoted.setAttribute('style', 'display: none');
         countVote = Number(dataUser[0].vote);
         elmSetCount.innerHTML = countVote;
         const checkVote = localStorage.getItem('tokenUser');
         if (checkVote === dataUser[0].userid) {
             disabledBtnVote();
+            elmVoted.setAttribute('style', 'display: block');
         }
     }
 }

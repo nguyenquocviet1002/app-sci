@@ -18,6 +18,7 @@
     
     &__number{
         text-align: center;
+        margin: 0 0 5px;
     }
 
     &__count{
@@ -90,4 +91,11 @@
 .disabled{
     filter: grayscale(1);
     pointer-events: none;
+}
+
+.err__voted {
+    text-align: center;
+    font-style: italic;
+    color: #999;
+    font-size: 13px;
 }
