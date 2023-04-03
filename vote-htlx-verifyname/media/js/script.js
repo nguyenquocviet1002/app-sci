@@ -68,7 +68,7 @@ const showNotification = (html) => {
 }
 
 const errorForm = (text) => {
-    document.getElementById('phone').classList.add('err');
+    document.getElementById('name').classList.add('err');
     document.getElementsByClassName('err__type')[0].innerHTML = text;
 }
 
@@ -87,8 +87,8 @@ const formInput = () => {
                 </div>
                 <div class="modal-body">
                     <div class="modal__voteControl">
-                        <label for="phone">Số điện thoại</label>
-                        <input type="text" id="phone" />
+                        <label for="name">Họ và tên</label>
+                        <input type="text" id="name" />
                         <span class="err__type"></span>
                         <input type="hidden" value="${ipLocal}" id="ipLocal" />
                         <input type="hidden" value="${idUser}" id="idUser" />
@@ -132,62 +132,55 @@ const formWarning = () => {
 };
 
 const submitVote = async () => {
-    const phoneValue = document.getElementById('phone').value;
-    const phone_regex = /((09|03|07|08|05)+([0-9]{8})\b)/g;
-
-    if (phoneValue !== '') {
-        if (phone_regex.test(phoneValue) == false) {
-            errorForm('Số điện thoại sai định dạng');
-        } else {
-            try {
-                const dataUserVote = await getUserVotes();
-                const checkUser = dataUserVote.filter(item => (item.userid === idUser));
-                const checkPhone = checkUser.filter(item => (item.phone === phoneValue));
-                const checkIp = checkUser.filter(item => (item.ip === ipLocal));
-                if (checkPhone.length > 0 || checkIp.length > 0) {
-                    localStorage.setItem('tokenUser', idUser);
-                    disabledBtnVote();
-                    closeForm();
-                    showNotification(formWarning());
-                    setTimeout(() => {
-                        document.getElementById('modal-warning').remove()
-                    }, 2000)
-                }
-                else {
-                    const dataVote = {
-                        phone: phoneValue,
-                        ip: ipLocal,
-                        userid: idUser
-                    }
-                    await createUserVotes(dataVote);
-                    disabledBtnVote();
-                    showNotification(formSuccess());
-                    localStorage.setItem('tokenUser', idUser)
-                    setTimeout(() => {
-                        document.getElementById('modal-pop').remove()
-                        document.getElementById('modal-success').remove()
-                    }, 2000);
-
-                    countVote += 1;
-                    elmSetCount.innerHTML = countVote;
-                    const votePlus = {
-                        vote: countVote
-                    }
-                    updateVotes(idUser, votePlus);
-                }
-            } catch (e) {
-                console.log(e)
+    const nameValue = document.getElementById('name').value;
+    if (nameValue !== '') {
+        try {
+            const dataUserVote = await getUserVotes();
+            const checkUser = dataUserVote.filter(item => (item.userid === idUser));
+            const checkIp = checkUser.filter(item => (item.ip === ipLocal));
+            if (checkIp.length >= 10) {
+                localStorage.setItem('tokenUser', idUser);
+                disabledBtnVote();
+                closeForm();
+                showNotification(formWarning());
+                setTimeout(() => {
+                    document.getElementById('modal-warning').remove()
+                }, 2000)
             }
+            else {
+                const dataVote = {
+                    phone: ipLocal,
+                    ip: ipLocal,
+                    userid: idUser
+                }
+                await createUserVotes(dataVote);
+                disabledBtnVote();
+                showNotification(formSuccess());
+                localStorage.setItem('tokenUser', idUser)
+                setTimeout(() => {
+                    document.getElementById('modal-pop').remove()
+                    document.getElementById('modal-success').remove()
+                }, 2000);
+
+                countVote += 1;
+                elmSetCount.innerHTML = countVote;
+                const votePlus = {
+                    vote: countVote
+                }
+                updateVotes(idUser, votePlus);
+            }
+        } catch (e) {
+            console.log(e)
         }
     } else {
-        errorForm('Nhập số điện thoại để bình chọn');
+        errorForm('Nhập họ và tên để bình chọn');
     }
 }
 
 elmButtonVote.addEventListener('click', () => {
     showNotification(formInput());
-    document.getElementById('phone').addEventListener('focus', () => {
-        document.getElementById('phone').classList.remove('err');
+    document.getElementById('name').addEventListener('focus', () => {
+        document.getElementById('name').classList.remove('err');
     })
 })
 
