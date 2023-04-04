@@ -90,10 +90,14 @@
 
 .disabled{
     filter: grayscale(1);
+}
+
+.handle{
     pointer-events: none;
 }
 
 .err__voted {
+    display: none;
     text-align: center;
     font-style: italic;
     color: #999;

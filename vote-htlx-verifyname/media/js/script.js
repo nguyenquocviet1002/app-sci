@@ -50,23 +50,32 @@ const getIP = async () => {
     return data;
 }
 
-const elmButtonVote = document.getElementsByClassName('vote__button')[0];
-const elmSetCount = document.getElementsByClassName('vote__count')[0];
-const elmVoted = document.getElementsByClassName('err__voted')[0];
+const elmButtonVote = document.getElementsByClassName('vote__button');
+const elmSetCount = document.getElementsByClassName('vote__count');
+const elmVoted = document.getElementsByClassName('err__voted');
 
 
-const idUser = elmButtonVote.getAttribute('data-id');
+const idUser = document.getElementsByClassName('vote__button')[0].getAttribute('data-id');
 const dataUser = [];
-let ipLocal  = '';
+let checkVote = [];
+let ipLocal = '';
 let countVote = 0;
 
 const disabledBtnVote = () => {
-    elmButtonVote.classList.add('disabled');
-    elmButtonVote.innerHTML = 'Đã bình chọn';
+    [...elmButtonVote].forEach(element => {
+        element.classList.add('disabled');
+        element.innerHTML = 'Đã bình chọn';
+    });
 }
 
-const showNotification = (html) => {
-    document.getElementsByTagName('body')[0].insertAdjacentHTML('beforeend', html);
+const showNotification = (html, type) => {
+    const elmVotedBtn = document.querySelectorAll('.vote__button.voted');
+    if (elmVotedBtn.length >= 1 && type) {
+        alert('Bạn đã bình chọn!!!');
+    }
+    else {
+        document.getElementsByTagName('body')[0].insertAdjacentHTML('beforeend', html);
+    }
 }
 
 const errorForm = (text) => {
@@ -76,6 +85,19 @@ const errorForm = (text) => {
 
 const closeForm = () => {
     document.getElementById('modal-pop').remove()
+}
+
+const addLocalStorage = () => {
+    let checkVoteLocal = JSON.parse(localStorage.getItem('userToken'));
+    let checkVote = [];
+    if (checkVoteLocal) {
+        checkVote = checkVoteLocal;
+        checkVote.push(idUser);
+    }
+    else {
+        checkVote.push(idUser);
+    }
+    localStorage.setItem('userToken', JSON.stringify(checkVote));
 }
 
 
@@ -140,10 +162,14 @@ const submitVote = async () => {
             const dataUserVote = await getUserVotes();
             const checkUser = dataUserVote.filter(item => (item.userid === idUser));
             const checkIp = checkUser.filter(item => (item.ip === ipLocal));
-            if (checkIp.length >= 10) {
-                localStorage.setItem('tokenUser', idUser);
+            if (checkIp.length >= 1) {
                 disabledBtnVote();
                 closeForm();
+                const elmVotedBtn = document.querySelectorAll('.vote__button');
+                [...elmVotedBtn].forEach(element => {
+                    element.classList.add('voted');
+                })
+                addLocalStorage();
                 showNotification(formWarning());
                 setTimeout(() => {
                     document.getElementById('modal-warning').remove()
@@ -157,20 +183,27 @@ const submitVote = async () => {
                 }
                 await createUserVotes(dataVote);
                 disabledBtnVote();
+                addLocalStorage();
                 showNotification(formSuccess());
-                elmVoted.setAttribute('style', 'display: block');
-                localStorage.setItem('tokenUser', idUser)
+                [...elmVoted].forEach(element => element.setAttribute('style', 'display: block'));
                 setTimeout(() => {
-                    document.getElementById('modal-pop').remove()
-                    document.getElementById('modal-success').remove()
+                    document.getElementById('modal-pop').remove();
+                    document.getElementById('modal-success').remove();
                 }, 2000);
-
+                setTimeout(() => {
+                    [...elmVoted].forEach(element => element.setAttribute('style', 'display: none'));
+                }, 6000);
                 countVote += 1;
-                elmSetCount.innerHTML = countVote;
+                [...elmSetCount].forEach(element => element.innerHTML = countVote)
                 const votePlus = {
                     vote: countVote
                 }
                 updateVotes(idUser, votePlus);
+
+                const elmVotedBtn = document.querySelectorAll('.vote__button');
+                [...elmVotedBtn].forEach(element => {
+                    element.classList.add('voted');
+                })
             }
         } catch (e) {
             console.log(e)
@@ -179,13 +212,6 @@ const submitVote = async () => {
         errorForm('Nhập họ và tên để bình chọn');
     }
 }
-
-elmButtonVote.addEventListener('click', () => {
-    showNotification(formInput());
-    document.getElementById('name').addEventListener('focus', () => {
-        document.getElementById('name').classList.remove('err');
-    })
-})
 
 window.onload = async () => {
     try {
@@ -201,14 +227,34 @@ window.onload = async () => {
     } finally {
         const { ip } = await getIP();
         ipLocal = String(ip);
-        elmButtonVote.classList.remove('disabled');
-        elmVoted.setAttribute('style', 'display: none');
+        [...elmButtonVote].forEach(element => {
+            element.classList.remove('disabled');
+            element.classList.remove('handle');
+        });
+        [...elmVoted].forEach(element => element.setAttribute('style', 'display: none'));
         countVote = Number(dataUser[0].vote);
-        elmSetCount.innerHTML = countVote;
-        const checkVote = localStorage.getItem('tokenUser');
-        if (checkVote === dataUser[0].userid) {
-            disabledBtnVote();
-            elmVoted.setAttribute('style', 'display: block');
+        [...elmSetCount].forEach(element => element.innerHTML = countVote);
+        checkVote = JSON.parse(localStorage.getItem('userToken'));
+        if (checkVote) {
+            if (checkVote.length > 1) {
+                checkVote.map(item => {
+                    if (item === idUser) {
+                        disabledBtnVote();
+                        const elmVotedBtn = document.querySelectorAll('.vote__button');
+                        [...elmVotedBtn].forEach(element => {
+                            element.classList.add('voted');
+                        })
+                    }
+                })
+            } else {
+                if (checkVote === idUser) {
+                    disabledBtnVote();
+                    const elmVotedBtn = document.querySelectorAll('.vote__button');
+                    [...elmVotedBtn].forEach(element => {
+                        element.classList.add('voted');
+                    })
+                }
+            }
         }
     }
 }
