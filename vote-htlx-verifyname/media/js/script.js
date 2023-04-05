@@ -45,7 +45,7 @@ const createUserVotes = async (info) => {
 }
 
 const getIP = async () => {
-    const response = await fetch(`https://api.ipify.org/?format=json`);
+    const response = await fetch(`https://app.scigroupvn.com/vote/public/api/get-ip`);
     const data = await response.json();
     return data;
 }
@@ -176,7 +176,7 @@ const submitVote = async () => {
             }
             else {
                 const dataVote = {
-                    phone: ipLocal,
+                    phone: nameValue,
                     userid: idUser
                 }
                 await createUserVotes(dataVote);
