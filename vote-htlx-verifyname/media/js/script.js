@@ -114,7 +114,6 @@ const formInput = () => {
                         <label for="name">Họ và tên</label>
                         <input type="text" id="name" />
                         <span class="err__type"></span>
-                        <input type="hidden" value="${ipLocal}" id="ipLocal" />
                         <input type="hidden" value="${idUser}" id="idUser" />
                     </div>
                     <button type="button" class="btn__submitVote" onclick={submitVote()}>Xác nhận bình chọn</button>
@@ -132,7 +131,7 @@ const formSuccess = () => {
                 <div class="modal-header modal__voteHead">
                 </div>
                 <div class="modal-body">
-                    <img width="105" height="105" src="media/images/icon-success.png" alt=""/>
+                    <img width="105" height="105" src="/wp-content/themes/Hanhtrinhlotxac2019/Module/Other/vote_1_0_0/media/images/icon-success.png" alt=""/>
                     <p class="notify">Vote thành công</p>
                 </div>
             </div>
@@ -147,7 +146,7 @@ const formWarning = () => {
             <div class="modal-box animate-pop">
                 <div class="modal-header modal__voteHead"></div>
                 <div class="modal-body">
-                    <img width="105" height="105" src="media/images/icon-warning.png" alt=""/>
+                    <img width="105" height="105" src="/wp-content/themes/Hanhtrinhlotxac2019/Module/Other/vote_1_0_0/media/images/icon-warning.png" alt=""/>
                     <p class="notify">Bạn đã thực hiện vote không thể vote tiếp</p>
                 </div>
             </div>
@@ -162,7 +161,7 @@ const submitVote = async () => {
             const dataUserVote = await getUserVotes();
             const checkUser = dataUserVote.filter(item => (item.userid === idUser));
             const checkIp = checkUser.filter(item => (item.ip === ipLocal));
-            if (checkIp.length >= 1) {
+            if (checkIp.length >= 10) {
                 disabledBtnVote();
                 closeForm();
                 const elmVotedBtn = document.querySelectorAll('.vote__button');
@@ -178,7 +177,6 @@ const submitVote = async () => {
             else {
                 const dataVote = {
                     phone: ipLocal,
-                    ip: ipLocal,
                     userid: idUser
                 }
                 await createUserVotes(dataVote);
@@ -199,6 +197,20 @@ const submitVote = async () => {
                     vote: countVote
                 }
                 updateVotes(idUser, votePlus);
+
+                function load_votenew(countVote) {
+                    var requestOptions = {
+                        method: 'GET',
+                        redirect: 'follow'
+                    };
+
+                    fetch(`https://hanhtrinhlotxac.vn/vote_new_api.php?post_id=${post_id}&count_vote=${countVote}`, requestOptions)
+                    .then(response => response.text())
+                    .then(result => console.log(result))
+                    .catch(error => console.log('error', error));
+                }
+
+                load_votenew(countVote);
 
                 const elmVotedBtn = document.querySelectorAll('.vote__button');
                 [...elmVotedBtn].forEach(element => {
