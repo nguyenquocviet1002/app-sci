@@ -236,7 +236,7 @@ window.onload = async () => {
         [...elmSetCount].forEach(element => element.innerHTML = countVote);
         checkVote = JSON.parse(localStorage.getItem('userToken'));
         if (checkVote) {
-            if (checkVote.length > 1) {
+            if (checkVote.length >= 1) {
                 checkVote.map(item => {
                     if (item === idUser) {
                         disabledBtnVote();
