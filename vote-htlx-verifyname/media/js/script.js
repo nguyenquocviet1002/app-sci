@@ -69,7 +69,7 @@ const disabledBtnVote = () => {
 }
 
 const showNotification = (html, type) => {
-    const elmVotedBtn = document.querySelectorAll('.vote__button.voted');
+    const elmVotedBtn = document.querySelectorAll('.vote__button.final');
     if (elmVotedBtn.length >= 1 && type) {
         alert('Bạn đã bình chọn!!!');
     }
@@ -167,7 +167,7 @@ const submitVote = async () => {
                 closeForm();
                 const elmVotedBtn = document.querySelectorAll('.vote__button');
                 [...elmVotedBtn].forEach(element => {
-                    element.classList.add('voted');
+                    element.classList.add('final');
                 })
                 addLocalStorage();
                 showNotification(formWarning());
@@ -202,7 +202,7 @@ const submitVote = async () => {
 
                 const elmVotedBtn = document.querySelectorAll('.vote__button');
                 [...elmVotedBtn].forEach(element => {
-                    element.classList.add('voted');
+                    element.classList.add('final');
                 })
             }
         } catch (e) {
@@ -242,7 +242,7 @@ window.onload = async () => {
                         disabledBtnVote();
                         const elmVotedBtn = document.querySelectorAll('.vote__button');
                         [...elmVotedBtn].forEach(element => {
-                            element.classList.add('voted');
+                            element.classList.add('final');
                         })
                     }
                 })
@@ -251,7 +251,7 @@ window.onload = async () => {
                     disabledBtnVote();
                     const elmVotedBtn = document.querySelectorAll('.vote__button');
                     [...elmVotedBtn].forEach(element => {
-                        element.classList.add('voted');
+                        element.classList.add('final');
                     })
                 }
             }
