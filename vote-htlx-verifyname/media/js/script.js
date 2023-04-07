@@ -268,6 +268,19 @@ window.onload = async () => {
                 }
             }
         }
+
+        const dateNow = new Date().getTime();
+        const dateSet = new Date('2023-04-08 00:00:00').getTime();
+        if(dateNow >= dateSet){
+            [...elmButtonVote].forEach(element => {
+                element.innerHTML = 'Hết thời gian vote';
+                element.removeAttribute('onclick');
+                element.classList.add('disabled')
+                element.addEventListener('click', () => {
+                    alert("Đã hết thời gian bình chọn chương trình");
+                })
+            });
+        }
     }
 }
 
