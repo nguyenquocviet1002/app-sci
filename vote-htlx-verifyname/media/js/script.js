@@ -154,16 +154,28 @@ const formWarning = () => {
     `
 };
 
+const loading = () => {
+    return `
+        <div class="lds-bg" id="loading"><div class="lds-default"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div><div>
+    `
+}
+
 const submitVote = async () => {
     const nameValue = document.getElementById('name').value;
+    document.getElementsByClassName('btn__submitVote')[0].classList.add('handle');
+    [...elmButtonVote].forEach(element => {
+        element.classList.add('disabled', 'handle');
+    });
+    closeForm();
+    document.getElementsByTagName('body')[0].insertAdjacentHTML('beforeend', loading());
     if (nameValue !== '') {
         try {
             const dataUserVote = await getUserVotes();
             const checkUser = dataUserVote.filter(item => (item.userid === idUser));
             const checkIp = checkUser.filter(item => (item.ip === ipLocal));
             if (checkIp.length >= 10) {
+                document.getElementById('loading').remove();
                 disabledBtnVote();
-                closeForm();
                 const elmVotedBtn = document.querySelectorAll('.vote__button');
                 [...elmVotedBtn].forEach(element => {
                     element.classList.add('final');
@@ -175,6 +187,7 @@ const submitVote = async () => {
                 }, 2000)
             }
             else {
+                document.getElementById('loading').remove();
                 const dataVote = {
                     phone: nameValue,
                     userid: idUser
@@ -185,7 +198,6 @@ const submitVote = async () => {
                 showNotification(formSuccess());
                 [...elmVoted].forEach(element => element.setAttribute('style', 'display: block'));
                 setTimeout(() => {
-                    document.getElementById('modal-pop').remove();
                     document.getElementById('modal-success').remove();
                 }, 2000);
                 setTimeout(() => {
@@ -196,7 +208,6 @@ const submitVote = async () => {
                 const votePlus = {
                     vote: countVote
                 }
-                updateVotes(idUser, votePlus);
 
                 function load_votenew(countVote) {
                     var requestOptions = {
@@ -210,7 +221,13 @@ const submitVote = async () => {
                     .catch(error => console.log('error', error));
                 }
 
-                load_votenew(countVote);
+                if(countVote <= 0){
+                    console.log("err");
+                }
+                else{
+                    updateVotes(idUser, votePlus);
+                    load_votenew(countVote);
+                }
 
                 const elmVotedBtn = document.querySelectorAll('.vote__button');
                 [...elmVotedBtn].forEach(element => {
@@ -267,6 +284,19 @@ window.onload = async () => {
                     })
                 }
             }
+        }
+
+        const dateNow = new Date().getTime();
+        const dateSet = new Date('2023-12-10 00:00:00').getTime();
+        if(dateNow >= dateSet){
+            [...elmButtonVote].forEach(element => {
+                element.innerHTML = 'Hết thời gian vote';
+                element.removeAttribute('onclick');
+                element.classList.add('disabled')
+                element.addEventListener('click', () => {
+                    alert("Đã hết thời gian bình chọn chương trình");
+                })
+            });
         }
     }
 }
