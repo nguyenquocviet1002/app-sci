@@ -162,14 +162,14 @@ const loading = () => {
 
 const submitVote = async () => {
     const nameValue = document.getElementById('name').value;
-    document.getElementsByClassName('btn__submitVote')[0].classList.add('handle');
-    [...elmButtonVote].forEach(element => {
-        element.classList.add('disabled', 'handle');
-    });
-    closeForm();
-    document.getElementsByTagName('body')[0].insertAdjacentHTML('beforeend', loading());
     if (nameValue !== '') {
         try {
+            document.getElementsByClassName('btn__submitVote')[0].classList.add('handle');
+            [...elmButtonVote].forEach(element => {
+                element.classList.add('disabled', 'handle');
+            });
+            closeForm();
+            document.getElementsByTagName('body')[0].insertAdjacentHTML('beforeend', loading());
             const dataUserVote = await getUserVotes();
             const checkUser = dataUserVote.filter(item => (item.userid === idUser));
             const checkIp = checkUser.filter(item => (item.ip === ipLocal));
@@ -221,7 +221,7 @@ const submitVote = async () => {
                     .catch(error => console.log('error', error));
                 }
 
-                if(countVote <= 0){
+                if(countVote < 10){
                     console.log("err");
                 }
                 else{
