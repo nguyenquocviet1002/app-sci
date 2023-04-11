@@ -6,6 +6,12 @@ const getVotes = async (id) => {
     return data;
 }
 
+const getVotesAll = async () => {
+    const response = await fetch(`${baseURL}/get-votes`);
+    const data = await response.json();
+    return data;
+}
+
 const createVotes = async (info) => {
     const response = await fetch(`${baseURL}/create-votes`, {
         method: "POST",
@@ -244,15 +250,46 @@ const submitVote = async () => {
 
 window.onload = async () => {
     try {
-        const data = await getVotes(idUser);
+        const dataNewU = await getVotesAll();
+        const dataConver = uniqByKeepFirst(dataNewU, it => it.userid);
+
+        const data = await getUserVotes();
+
+        const idUU = 'KN692633';
+
+        const data2 = data.filter(item => {
+            return item.userid === idUU;
+        })        
+        function uniqByKeepFirst(a, key) {
+            let seen = new Set();
+            return a.filter(item => {
+                let k = key(item);
+                return seen.has(k) ? false : seen.add(k);
+            });
+        }
+        
+        
+        function uniqByKeepLast(a, key) {
+            return [
+                ...new Map(
+                    a.map(x => [key(x), x])
+                ).values()
+            ]
+        }
+    
+        
+        console.log("User",idUU)
+        console.log("data no IP",data2.length)
+        console.log("data IP length", uniqByKeepFirst(data2, it => it.ip).length)
+        console.log("data IP",uniqByKeepLast(data2, it => it.ip))
         dataUser.push(data);
     } catch (e) {
         const info = {
             userid: idUser,
             vote: 0
         }
-        const data = await createVotes(info);
-        dataUser.push(data.data);
+        // const data = await createVotes(info);
+        // dataUser.push(data.data);
     } finally {
         const { ip } = await getIP();
         ipLocal = String(ip);
@@ -298,6 +335,7 @@ window.onload = async () => {
                 })
             });
         }
+        
     }
 }
 

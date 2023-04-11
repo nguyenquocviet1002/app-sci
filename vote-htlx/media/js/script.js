@@ -215,3 +215,27 @@ window.onload = async () => {
     }
 }
 
+
+// const data2 = data.filter(item => {
+        //     return item.userid === 'KN692411';
+        // })        
+        // function uniqByKeepFirst(a, key) {
+        //     let seen = new Set();
+        //     return a.filter(item => {
+        //         let k = key(item);
+        //         return seen.has(k) ? false : seen.add(k);
+        //     });
+        // }
+        
+        
+        // function uniqByKeepLast(a, key) {
+        //     return [
+        //         ...new Map(
+        //             a.map(x => [key(x), x])
+        //         ).values()
+        //     ]
+        // }
+    
+        
+        // console.log(uniqByKeepFirst(data2, it => it.ip).length)
+        // console.log(uniqByKeepLast(data2, it => it.ip))
