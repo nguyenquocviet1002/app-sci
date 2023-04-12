@@ -251,15 +251,30 @@ const submitVote = async () => {
 window.onload = async () => {
     try {
         const dataNewU = await getVotesAll();
+    
         const dataConver = uniqByKeepFirst(dataNewU, it => it.userid);
 
         const data = await getUserVotes();
 
-        const idUU = 'KN692633';
+// =============================================
+        const idUU = dataConver[44].userid;
+// ===============================================
 
         const data2 = data.filter(item => {
             return item.userid === idUU;
-        })        
+        });
+        
+        const data2ip = data2.map(item => item.ip);
+        const newD = data2ip.filter((item,index) => {
+            return data2ip.indexOf(item) !== index
+        })
+        
+        const newDFinal = newD.filter((item,index) => {
+            return newD.indexOf(item) === index
+        })
+        
+        console.log("newDFinal: ", newDFinal);
+          
         function uniqByKeepFirst(a, key) {
             let seen = new Set();
             return a.filter(item => {
