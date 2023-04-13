@@ -257,7 +257,7 @@ window.onload = async () => {
         const data = await getUserVotes();
 
 // =============================================
-        const idUU = dataConver[44].userid;
+        const idUU = dataConver[103].userid;
 // ===============================================
 
         const data2 = data.filter(item => {
