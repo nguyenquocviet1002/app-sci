@@ -6,6 +6,12 @@ const getVotes = async (id) => {
     return data;
 }
 
+const getVotesAll = async () => {
+    const response = await fetch(`${baseURL}/get-votes`);
+    const data = await response.json();
+    return data;
+}
+
 const createVotes = async (info) => {
     const response = await fetch(`${baseURL}/create-votes`, {
         method: "POST",
@@ -187,23 +193,19 @@ const submitVote = async () => {
                 }, 2000)
             }
             else {
-                document.getElementById('loading').remove();
                 const dataVote = {
                     phone: nameValue,
                     userid: idUser
                 }
                 await createUserVotes(dataVote);
-                disabledBtnVote();
-                addLocalStorage();
-                showNotification(formSuccess());
-                [...elmVoted].forEach(element => element.setAttribute('style', 'display: block'));
-                setTimeout(() => {
-                    document.getElementById('modal-success').remove();
-                }, 2000);
-                setTimeout(() => {
-                    [...elmVoted].forEach(element => element.setAttribute('style', 'display: none'));
-                }, 6000);
-                countVote += 1;
+
+                let countLocal =  Number(localStorage.getItem('localItem'));
+                if(!countLocal){
+                    countVote += 1;
+                }
+                else{
+                    countVote = countLocal + 1;
+                }
                 [...elmSetCount].forEach(element => element.innerHTML = countVote)
                 const votePlus = {
                     vote: countVote
@@ -221,18 +223,24 @@ const submitVote = async () => {
                     .catch(error => console.log('error', error));
                 }
 
-                if(countVote < 10){
-                    console.log("err");
-                }
-                else{
-                    updateVotes(idUser, votePlus);
-                    load_votenew(countVote);
-                }
+                updateVotes(idUser, votePlus);
+                load_votenew(countVote);
 
+                disabledBtnVote();
+                addLocalStorage();
                 const elmVotedBtn = document.querySelectorAll('.vote__button');
                 [...elmVotedBtn].forEach(element => {
                     element.classList.add('final');
                 })
+                document.getElementById('loading').remove();
+                showNotification(formSuccess());
+                [...elmVoted].forEach(element => element.setAttribute('style', 'display: block'));
+                setTimeout(() => {
+                    document.getElementById('modal-success').remove();
+                }, 2000);
+                setTimeout(() => {
+                    [...elmVoted].forEach(element => element.setAttribute('style', 'display: none'));
+                }, 6000);
             }
         } catch (e) {
             console.log(e)
@@ -244,16 +252,21 @@ const submitVote = async () => {
 
 window.onload = async () => {
     try {
-        const data = await getVotes(idUser);
-        dataUser.push(data);
-    } catch (e) {
-        const info = {
+        const allVote = await getVotesAll();
+        const checkUserV = allVote.filter(item => item.userid === idUser);
+        if(checkUserV.length > 0){
+            const data = await getVotes(idUser);
+            dataUser.push(data);
+        }
+        else{
+            const info = {
             userid: idUser,
             vote: 0
+            }
+            const data = await createVotes(info);
+            dataUser.push(data.data);
         }
-        const data = await createVotes(info);
-        dataUser.push(data.data);
-    } finally {
+        
         const { ip } = await getIP();
         ipLocal = String(ip);
         [...elmButtonVote].forEach(element => {
@@ -262,6 +275,7 @@ window.onload = async () => {
         });
         [...elmVoted].forEach(element => element.setAttribute('style', 'display: none'));
         countVote = Number(dataUser[0].vote);
+        localStorage.setItem('localItem', countVote);
         [...elmSetCount].forEach(element => element.innerHTML = countVote);
         checkVote = JSON.parse(localStorage.getItem('userToken'));
         if (checkVote) {
@@ -298,6 +312,9 @@ window.onload = async () => {
                 })
             });
         }
+    } catch (e) {
+        console.log(e);
+        alert('Lỗi!!! Vui lòng bình chọn lại.');
     }
 }
 
