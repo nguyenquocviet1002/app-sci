@@ -64,6 +64,7 @@ const elmVoted = document.getElementsByClassName('err__voted');
 const idUser = document.getElementsByClassName('vote__button')[0].getAttribute('data-id');
 const dataUser = [];
 let checkVote = [];
+let checkIp = [];
 let ipLocal = '';
 let countVote = 0;
 
@@ -176,9 +177,6 @@ const submitVote = async () => {
             });
             closeForm();
             document.getElementsByTagName('body')[0].insertAdjacentHTML('beforeend', loading());
-            const dataUserVote = await getUserVotes();
-            const checkUser = dataUserVote.filter(item => (item.userid === idUser));
-            const checkIp = checkUser.filter(item => (item.ip === ipLocal));
             if (checkIp.length >= 10) {
                 document.getElementById('loading').remove();
                 disabledBtnVote();
@@ -199,14 +197,11 @@ const submitVote = async () => {
                 }
                 await createUserVotes(dataVote);
 
-                let countLocal =  Number(localStorage.getItem('localItem'));
-                if(!countLocal){
-                    countVote += 1;
-                }
-                else{
-                    countVote = countLocal + 1;
-                }
-                [...elmSetCount].forEach(element => element.innerHTML = countVote)
+                const dataSV = await getVotes(idUser);
+                countVote = Number(dataSV.vote) + 1;
+
+                [...elmSetCount].forEach(element => element.innerHTML = countVote);
+
                 const votePlus = {
                     vote: countVote
                 }
@@ -269,6 +264,9 @@ window.onload = async () => {
         
         const { ip } = await getIP();
         ipLocal = String(ip);
+        const dataUserVote = await getUserVotes();
+        const checkUser = dataUserVote.filter(item => (item.userid === idUser));
+        checkIp = checkUser.filter(item => (item.ip === ipLocal));
         [...elmButtonVote].forEach(element => {
             element.classList.remove('disabled');
             element.classList.remove('handle');
@@ -312,6 +310,8 @@ window.onload = async () => {
                 })
             });
         }
+
+        document.getElementById('loading').remove();
     } catch (e) {
         console.log(e);
         alert('Lỗi!!! Vui lòng bình chọn lại.');
