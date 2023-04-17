@@ -262,11 +262,6 @@ window.onload = async () => {
             dataUser.push(data.data);
         }
         
-        const { ip } = await getIP();
-        ipLocal = String(ip);
-        const dataUserVote = await getUserVotes();
-        const checkUser = dataUserVote.filter(item => (item.userid === idUser));
-        checkIp = checkUser.filter(item => (item.ip === ipLocal));
         [...elmButtonVote].forEach(element => {
             element.classList.remove('disabled');
             element.classList.remove('handle');
@@ -299,8 +294,8 @@ window.onload = async () => {
         }
 
         const dateNow = new Date().getTime();
-        const dateSet = new Date('2023-12-10 00:00:00').getTime();
-        if(dateNow >= dateSet){
+        const dateEnd = new Date('2023-04-16 00:00:00').getTime();
+        if(dateNow >= dateEnd){
             [...elmButtonVote].forEach(element => {
                 element.innerHTML = 'Hết thời gian vote';
                 element.removeAttribute('onclick');
@@ -309,6 +304,13 @@ window.onload = async () => {
                     alert("Đã hết thời gian bình chọn chương trình");
                 })
             });
+        }
+        else{
+            const { ip } = await getIP();
+            ipLocal = String(ip);
+            const dataUserVote = await getUserVotes();
+            const checkUser = dataUserVote.filter(item => (item.userid === idUser));
+            checkIp = checkUser.filter(item => (item.ip === ipLocal));
         }
 
         document.getElementById('loading').remove();
