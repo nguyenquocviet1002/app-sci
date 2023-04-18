@@ -268,7 +268,6 @@ window.onload = async () => {
         });
         [...elmVoted].forEach(element => element.setAttribute('style', 'display: none'));
         countVote = Number(dataUser[0].vote);
-        localStorage.setItem('localItem', countVote);
         [...elmSetCount].forEach(element => element.innerHTML = countVote);
         checkVote = JSON.parse(localStorage.getItem('userToken'));
         if (checkVote) {
