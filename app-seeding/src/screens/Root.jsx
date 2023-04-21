@@ -18,7 +18,7 @@ const ScreensRoot = () => {
     <Router basename="/cp/app-seeding">
       <Routes>
         <Route index element={storage ? <Navigate to="/dashboard" replace /> : <ScreensLogin />} />
-        <Route path="login" element={storage ? <Navigate to="/dashboard" replace /> : <ScreensLogin />} />
+        <Route path="login" element={<ScreensLogin />} />
         <Route path="dashboard" element={<ScreenDashboard />}>
           <Route path="lead" element={<Lead />} />
           <Route path="booking" element={<Booking />} />
