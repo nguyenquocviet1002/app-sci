@@ -8,13 +8,8 @@ const Tabs = () => {
     <div className={tabsStyles['tabs_bock']}>
       <ul className="tabs flex">
         {MENU.map((item, index) => (
-          <li key={index} className={`${tabsStyles['tab-link']} btn`}>
-            <NavLink
-              to={item.link}
-              className={({ isActive, isPending }) => (isPending ? 'pending' : isActive ? 'active' : '')}
-            >
-              {item.title}
-            </NavLink>
+          <li key={index} className={`${tabsStyles['tab-link']}`}>
+            <NavLink to={item.link}>{item.title}</NavLink>
           </li>
         ))}
       </ul>

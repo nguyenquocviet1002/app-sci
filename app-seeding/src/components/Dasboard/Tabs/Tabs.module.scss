@@ -1,22 +1,23 @@
-.tabs_bock {
-    padding-top: 20px;
-}
-
 .tab-link {
-    font-size: 15px;
-    font-weight: 500;
-    border-radius: 6px 6px 0 0;
+  font-size: 15px;
+  font-weight: 500;
+  border-radius: 6px 6px 0 0;
 
-    &:hover {
-        box-shadow: 0 8px 16px 0 #00000014, 0 6px 20px 0 #0000000d;
-        transition: 1s linear;
-    }
+  &:hover {
+    box-shadow: 0 8px 16px 0 #00000014, 0 6px 20px 0 #0000000d;
+    transition: 1s linear;
+  }
+
+  a {
+    display: block;
+    padding: 10px 20px;
+  }
 }
 
 .current {
-    background-color: #fff;
+  background-color: #fff;
 
-    &:hover {
-        box-shadow: none;
-    }
+  &:hover {
+    box-shadow: none;
+  }
 }

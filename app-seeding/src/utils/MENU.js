@@ -9,10 +9,10 @@ export const MENU = [
     },
     {
         link: 'lead-booking',
-        title: 'Lead và Booking'
+        title: 'Báo cáo số lượng'
     },
     {
         link: 'expense',
-        title: "Chi phí"
+        title: "Báo cáo chi phí"
     }
 ]
