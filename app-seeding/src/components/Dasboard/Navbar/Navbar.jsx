@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getUser } from '../../../apis/User';
+import { getUser } from '@/apis/User';
 import ModalPassword from '../ModalPassword/ModalPassword';
 import navbarStyles from './Navbar.module.scss';
+import useModal from '@/hooks/useModal';
 
 const Navbar = () => {
   const [user, setUser] = useState({});
-  const [show, setShow] = useState(false);
+
+  const { isShowing, cpn, toggle } = useModal();
 
   const token = localStorage.getItem('token');
   const navigate = useNavigate();
@@ -30,10 +32,6 @@ const Navbar = () => {
     navigate('/login');
   };
 
-  const showOff = () => {
-    setShow(false);
-  };
-
   return (
     <div>
       <header className={navbarStyles['headerMain']}>
@@ -47,18 +45,22 @@ const Navbar = () => {
               <button
                 className={`button ${navbarStyles['navButton__changePassword']} modal-btn btn`}
                 data-modal="modal-opacity-changePass"
-                onClick={() => setShow(true)}
+                onClick={() => toggle('ModalPassword')}
               >
                 Đổi mật khẩu
               </button>
-              <button className="button navButton__logout" onClick={() => logout()}>
-                Đăng xuất <i className="icon-logout"></i>
+              <button className={`button ${navbarStyles['navButton__logout']}`} onClick={() => logout()}>
+                Đăng xuất
+                <span
+                  className={navbarStyles['navIconLogout']}
+                  style={{ backgroundImage: `url(${process.env.PUBLIC_URL}/images/icon-logout.png)` }}
+                ></span>
               </button>
             </div>
           </div>
         </div>
       </header>
-      <ModalPassword show={show} showOff={showOff} />
+      <ModalPassword isShowing={isShowing} hide={toggle} element={cpn} />
     </div>
   );
 };

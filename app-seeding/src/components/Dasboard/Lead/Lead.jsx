@@ -1,8 +1,14 @@
 import DataTable from 'react-data-table-component';
-import { getLead } from '../../../apis/Lead';
+import { getLead } from '@/apis/Lead';
+
 import React, { useEffect, useState } from 'react';
 
 import leadStyles from './Lead.module.scss';
+import Modal from '../ModalSearch/ModalSearch';
+import useModal from '@/hooks/useModal';
+import ModalCreate from '../ModalCreate/ModalCreate';
+import ModalUpdate from '../ModalUpdate/ModalUpdate';
+import ModalMore from '../ModalMore/ModalMore';
 
 const token = localStorage.getItem('token');
 
@@ -24,7 +30,9 @@ const info = {
 
 const Lead = () => {
   const [dataLead, setDataLead] = useState([]);
+  const [dataLeadItem, setDataLeadItem] = useState([]);
 
+  const { isShowing, cpn, toggle } = useModal();
   useEffect(() => {
     getLead(info)
       .then(({ data }) => {
@@ -38,18 +46,8 @@ const Lead = () => {
 
   const showMore = async (id) => {
     const dataOnly = dataLead.filter((item) => item.id === id);
-    const form = `
-      <div>Mã: ${dataOnly[0].code_form}</div>
-      <div>Họ và tên: ${dataOnly[0].name}</div>
-      <div>Số điện thoại: ${dataOnly[0].phone}</div>
-      <div>Facebook: <a href="${dataOnly[0].link_fb}">${dataOnly[0].name_fb}</a></div>
-      <div>Dịch vụ đăng ký: ${dataOnly[0].service}</div>
-      <div>Chi nhánh: ${dataOnly[0].company_name}</div>
-      <div>Kịch bản: ${dataOnly[0].script}</div>
-      <div>Thời gian - chưa có: ${dataOnly[0].company_code}</div>
-      <div>Ghi chú: ${dataOnly[0].note}</div>
-    `;
-    document.getElementsByTagName('body')[0].insertAdjacentHTML('beforebegin', form);
+    console.log(dataOnly[0]);
+    setDataLeadItem(dataOnly);
   };
 
   const columns = [
@@ -74,22 +72,93 @@ const Lead = () => {
       selector: (row) => row.seeding_user_name,
     },
     {
-      name: 'Ngày tạo - Chưa có',
-      selector: (row) => row.script,
+      name: 'Ngày tạo',
+      selector: (row) => row.create_date,
     },
     {
       name: 'Xem thêm',
-      cell: (row) => <button onClick={() => showMore(row.id)}>Xem thêm</button>,
+      cell: (row) => (
+        <div className={leadStyles['cta__action']}>
+          <button
+            className={leadStyles['showmore']}
+            onClick={() => {
+              showMore(row.id);
+              toggle('ModalMore');
+            }}
+          >
+            Xem thêm
+          </button>
+          <div
+            onClick={() => toggle('ModalUpdate')}
+            className={leadStyles['update']}
+            style={{ backgroundImage: `url(${process.env.PUBLIC_URL}/images/icon-pen.png)` }}
+          ></div>
+        </div>
+      ),
     },
   ];
 
+  const customStyles = {
+    subHeader: {
+      style: {
+        display: 'block',
+        padding: '20px 20px 10px',
+      },
+    },
+    headCells: {
+      style: {
+        paddingLeft: '8px',
+        paddingRight: '8px',
+        fontSize: '16px',
+        fontWeight: '600',
+        backgroundColor: '#f9fafb',
+      },
+    },
+    rows: {
+      style: {
+        minHeight: '60px',
+        fontSize: '15px',
+      },
+    },
+    cells: {
+      style: {
+        paddingLeft: '8px',
+        paddingRight: '8px',
+      },
+    },
+  };
+
   return (
-    <div className={leadStyles['box__lead']}>
-      <div className={leadStyles['btn__action']}>
-        <button>Tìm kiếm</button>
-        <button>Thêm mới</button>
+    <div className={leadStyles['contentLead']}>
+      <div className={leadStyles['contentLead__btn']}>
+        <button
+          className={`${leadStyles['contentLead__btn--search']} btn modal-btn`}
+          data-modal="modal-opacity"
+          onClick={() => toggle('Modal')}
+        >
+          <span>Tìm kiếm</span>
+          <span
+            className={leadStyles['contentLead__iconSearch']}
+            style={{ backgroundImage: `url(${process.env.PUBLIC_URL}/images/icon-search.png)` }}
+          ></span>
+        </button>
+        <button
+          className={`${leadStyles['contentLead__btn--add']} btn modal-btn`}
+          data-modal="modal-opacity-add"
+          onClick={() => toggle('ModalCreate')}
+        >
+          <span>Thêm mới</span>
+          <span
+            className={leadStyles['contentLead__iconAdd']}
+            style={{ backgroundImage: `url(${process.env.PUBLIC_URL}/images/icon-add.png)` }}
+          ></span>
+        </button>
       </div>
-      <DataTable columns={columns} data={dataLead} pagination />
+      <DataTable columns={columns} data={dataLead} pagination customStyles={customStyles} highlightOnHover />
+      <Modal isShowing={isShowing} hide={toggle} element={cpn} />
+      <ModalCreate isShowing={isShowing} hide={toggle} element={cpn} />
+      <ModalUpdate isShowing={isShowing} hide={toggle} element={cpn} />
+      <ModalMore isShowing={isShowing} hide={toggle} element={cpn} data={dataLeadItem} />
     </div>
   );
 };

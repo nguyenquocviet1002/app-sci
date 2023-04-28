@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import loginStyles from './Login.module.scss';
-import { login } from '../../apis/Login';
+import { login } from '@/apis/Login';
 import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
@@ -16,7 +16,7 @@ const Login = () => {
         if (!data.message) {
           setValidate(false);
           localStorage.setItem('token', data.access_token);
-          navigate('/dashboard');
+          navigate('/dashboard/lead');
         } else {
           setValidate(true);
         }

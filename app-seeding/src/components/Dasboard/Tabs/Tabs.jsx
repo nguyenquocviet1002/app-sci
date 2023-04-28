@@ -1,6 +1,6 @@
 import React from 'react';
 import tabsStyles from './Tabs.module.scss';
-import { MENU } from '../../../utils/MENU';
+import { MENU } from '@/utils/MENU';
 import { NavLink } from 'react-router-dom';
 
 const Tabs = () => {

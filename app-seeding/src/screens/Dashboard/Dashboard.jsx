@@ -1,7 +1,7 @@
 import React from 'react';
 import dashboardStyles from './Dashboard.module.scss';
-import Navbar from '../../components/Dasboard/Navbar/Navbar';
-import Tabs from '../../components/Dasboard/Tabs/Tabs';
+import Navbar from '@/components/Dasboard/Navbar/Navbar';
+import Tabs from '@/components/Dasboard/Tabs/Tabs';
 import { Outlet } from 'react-router-dom';
 
 const ScreenDashboard = () => {
