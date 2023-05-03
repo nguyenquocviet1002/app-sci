@@ -16,7 +16,7 @@ const ModalMore = ({ isShowing, hide, element, data }) =>
                 <div className="modal-title">Chi tiết</div>
               </div>
               <div className="modal-body">
-                <div className={modalSearchStyles['modalForm']}>
+                <div className={modalSearchStyles['modalForm--2']}>
                   <div
                     className={modalSearchStyles['modalForm__input']}
                     style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
