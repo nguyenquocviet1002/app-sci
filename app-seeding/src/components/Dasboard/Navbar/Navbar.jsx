@@ -1,31 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getUser } from '@/apis/User';
+import useModal from '@/hooks/useModal';
+import { useLocalStorage } from '@/hooks/useLocalStorage';
+
 import ModalPassword from '../ModalPassword/ModalPassword';
 import navbarStyles from './Navbar.module.scss';
-import useModal from '@/hooks/useModal';
+import { useGetUser } from '@/services';
 
 const Navbar = () => {
-  const [user, setUser] = useState({});
-
   const { isShowing, cpn, toggle } = useModal();
 
-  const token = localStorage.getItem('token');
+  // eslint-disable-next-line no-unused-vars
+  const [token, setToken] = useLocalStorage('token', null);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    getUser(token)
-      .then(({ data }) => {
-        let user = {
-          rule: data.data.rule,
-          username: data.data.username,
-        };
-        setUser(user);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, [token]);
+  const { dataUser, isSuccessUser } = useGetUser(token);
 
   const logout = () => {
     localStorage.clear();
@@ -39,7 +28,7 @@ const Navbar = () => {
           <div className={navbarStyles['nav']}>
             <div className={navbarStyles['navUserName']}>
               <img src={`${process.env.PUBLIC_URL}/images/profile.png`} alt="" />
-              <p>{user.username}</p>
+              {isSuccessUser && <p>{dataUser.data.data.username}</p>}
             </div>
             <div className={navbarStyles['navButton']}>
               <button

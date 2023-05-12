@@ -1,50 +1,50 @@
 import DataTable from 'react-data-table-component';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useLocalStorage } from '@/hooks/useLocalStorage';
+import { useGetLeads } from '@/services';
+
 import { createForm, getLead, updateForm } from '@/apis/Lead';
-
-import React, { useEffect, useState } from 'react';
-
 import leadStyles from './Lead.module.scss';
-import Modal from '../ModalSearch/ModalSearch';
+import ModalSearch from '../ModalSearch/ModalSearch';
 import useModal from '@/hooks/useModal';
 import ModalCreate from '../ModalCreate/ModalCreate';
 import ModalUpdate from '../ModalUpdate/ModalUpdate';
 import ModalMore from '../ModalMore/ModalMore';
 
-const token = localStorage.getItem('token');
-
-const info = {
-  token: token,
-  brand_id: '',
-  type: 'seeding',
-  limit: 0,
-  offset: 0,
-  company_id: '',
-  name_fb: '',
-  phone: '',
-  service: '',
-  name: '',
-  start_date: '',
-  end_date: '',
-  user_seeding: '',
-};
-
 const Lead = () => {
-  const [dataLead, setDataLead] = useState([]);
+  const [dataFinal, setDataFinal] = useState({});
   const [dataLeadItem, setDataLeadItem] = useState([]);
   const [filterSearch, setFilterSearch] = useState(false);
   const [infoFilter, setInfoFilter] = useState([]);
 
+  // eslint-disable-next-line no-unused-vars
+  const [token, setToken] = useLocalStorage('token', null);
+
+  const info = useMemo(() => {
+    return {
+      token: token,
+      brand_id: '',
+      type: 'seeding',
+      limit: 0,
+      offset: 0,
+      company_id: '',
+      name_fb: '',
+      phone: '',
+      service: '',
+      name: '',
+      start_date: '',
+      end_date: '',
+      user_seeding: '',
+    };
+  }, [token]);
+
   const { isShowing, cpn, toggle } = useModal();
-  useEffect(() => {
-    getLead(info)
-      .then(({ data }) => {
-        data.data.shift();
-        setDataLead(data.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
+
+  const { dataLead, isLoadingLead, isSuccessLead, refetchLead } = useGetLeads(info);
+  if (isSuccessLead) {
+    dataLead.data.data.shift();
+    console.log('dataLead: ', dataLead.data.data);
+  }
 
   const addLead = async (info) => {
     await createForm(info)
@@ -67,7 +67,7 @@ const Lead = () => {
         await getLead(info)
           .then(({ data }) => {
             data.data.shift();
-            setDataLead(data.data);
+            // setDataLead(data.data);
           })
           .catch((err) => {
             console.log(err);
@@ -79,53 +79,39 @@ const Lead = () => {
   };
 
   const updateLead = async (info) => {
-    console.log(info);
-    // await updateForm(info)
-    //   .then(async ({ data }) => {
-    //     const info = {
-    //       token: token,
-    //       brand_id: '',
-    //       type: 'seeding',
-    //       limit: 0,
-    //       offset: 0,
-    //       company_id: '',
-    //       name_fb: '',
-    //       phone: '',
-    //       service: '',
-    //       name: '',
-    //       start_date: '',
-    //       end_date: '',
-    //       user_seeding: '',
-    //     };
-    //     await getLead(info)
-    //       .then(({ data }) => {
-    //         data.data.shift();
-    //         setDataLead(data.data);
-    //       })
-    //       .catch((err) => {
-    //         console.log(err);
-    //       });
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //   });
-  };
-  const showMore = async (id) => {
-    const dataOnly = dataLead.filter((item) => item.id === id);
-    setDataLeadItem(dataOnly);
-  };
-
-  const searchLead = async (info) => {
-    setInfoFilter(info);
-    console.log(info);
-    await getLead(info)
-      .then(({ data }) => {
-        data.data.shift();
-        setDataLead(data.data);
+    await updateForm(info)
+      .then(async ({ data }) => {
+        const info = {
+          token: token,
+          brand_id: '',
+          type: 'seeding',
+          limit: 0,
+          offset: 0,
+          company_id: '',
+          name_fb: '',
+          phone: '',
+          service: '',
+          name: '',
+          start_date: '',
+          end_date: '',
+          user_seeding: '',
+        };
+        await getLead(info)
+          .then(({ data }) => {
+            data.data.shift();
+            // setDataLead(data.data);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
       })
       .catch((err) => {
         console.log(err);
       });
+  };
+  const showMore = async (id) => {
+    const dataOnly = dataLead.filter((item) => item.id === id);
+    setDataLeadItem(dataOnly);
   };
 
   const showFilter = () => {
@@ -133,14 +119,15 @@ const Lead = () => {
   };
 
   const showFilter2 = () => {
-    getLead(info)
-      .then(({ data }) => {
-        data.data.shift();
-        setDataLead(data.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    refetchLead();
+    // getLead(info)
+    //   .then(({ data }) => {
+    //     data.data.shift();
+    //     // setDataLead(data.data);
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   });
     setFilterSearch(!filterSearch);
     setInfoFilter([]);
   };
@@ -233,7 +220,7 @@ const Lead = () => {
           <button
             className={`${leadStyles['contentLead__btn--search']} btn modal-btn`}
             data-modal="modal-opacity"
-            onClick={() => toggle('Modal')}
+            onClick={() => toggle('ModalSearch')}
           >
             <span>Tìm kiếm</span>
             <span
@@ -301,8 +288,17 @@ const Lead = () => {
       ) : (
         ''
       )}
-      <DataTable columns={columns} data={dataLead} pagination customStyles={customStyles} highlightOnHover />
-      <Modal isShowing={isShowing} hide={toggle} element={cpn} token={token} search={searchLead} show={showFilter} />
+      {isLoadingLead && <div>Loading...</div>}
+      {isSuccessLead && (
+        <DataTable
+          columns={columns}
+          data={dataLead.data.data}
+          pagination
+          customStyles={customStyles}
+          highlightOnHover
+        />
+      )}
+      <ModalSearch isShowing={isShowing} hide={toggle} element={cpn} token={token} show={showFilter} />
       <ModalCreate isShowing={isShowing} hide={toggle} element={cpn} token={token} create={addLead} />
       <ModalUpdate
         isShowing={isShowing}

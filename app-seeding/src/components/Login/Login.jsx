@@ -1,29 +1,52 @@
 import React, { useState } from 'react';
-import loginStyles from './Login.module.scss';
-import { login } from '@/apis/Login';
+import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
+import { useLocalStorage } from '@/hooks/useLocalStorage';
+
+import { getTokenFn } from '@/utils/api';
+
+import loginStyles from './Login.module.scss';
 
 const Login = () => {
-  const [user, setUser] = useState('');
-  const [password, setPassword] = useState('');
-  const [validate, setValidate] = useState(false);
-
   const navigate = useNavigate();
+  const initialLogin = {
+    user: '',
+    password: '',
+  };
 
-  const getLogin = async (user, password) => {
-    await login(user, password)
-      .then(({ data }) => {
-        if (!data.message) {
-          setValidate(false);
-          localStorage.setItem('token', data.access_token);
-          navigate('/dashboard/lead');
-        } else {
-          setValidate(true);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+  const [infoUser, setInfoUser] = useState(initialLogin);
+  const [validate, setValidate] = useState({ status: false, message: '' });
+
+  // eslint-disable-next-line no-unused-vars
+  const [token, setToken] = useLocalStorage('token', null);
+
+  const handleChange = (name) => (event) => {
+    setInfoUser((prev) => ({ ...prev, [name]: event.target.value }));
+  };
+
+  const queryLogin = useQuery({
+    queryKey: ['login', infoUser],
+    queryFn: () => getTokenFn(infoUser),
+    enabled: false,
+    refetchOnWindowFocus: false,
+    cacheTime: 60000,
+    staleTime: Infinity,
+    onSuccess: (data) => {
+      if (data.data.message) {
+        setValidate({ status: true, message: 'Số điện thoại hoặc mật khẩu không đúng' });
+      } else {
+        setToken(data.data.access_token);
+        navigate('/dashboard/lead');
+      }
+    },
+  });
+
+  const handleSubmit = () => {
+    if (infoUser.user === '' || infoUser.password === '') {
+      setValidate({ status: true, message: 'Số điện thoại và mật khẩu không được để trống' });
+    } else {
+      queryLogin.refetch();
+    }
   };
 
   return (
@@ -31,29 +54,32 @@ const Login = () => {
       <div className={loginStyles['signin__box']}>
         <div className={loginStyles['signin__left']}>
           <div className={loginStyles['signin__title']}>Đăng nhập</div>
+          {validate.status ? <p className={loginStyles['signin__error']}>{validate.message}</p> : ''}
           <div className={loginStyles['signin__group']}>
             <label htmlFor="phone-number">Số điện thoại</label>
             <input
               type="text"
               id="phone-number"
-              className={validate ? loginStyles['error'] : ''}
-              value={user}
-              onChange={(event) => setUser(event.target.value)}
+              className={validate.status ? loginStyles['error'] : ''}
+              value={infoUser.user}
+              onChange={handleChange('user')}
+              onFocus={() => setValidate({ status: false, message: '' })}
             />
           </div>
           <div className={loginStyles['signin__group']}>
-            <label htmlFor="password">Password</label>
+            <label htmlFor="password">Mật khẩu</label>
             <input
               type="password"
-              className={validate ? loginStyles['error'] : ''}
+              className={validate.status ? loginStyles['error'] : ''}
               id="password"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
+              value={infoUser.password}
+              onChange={handleChange('password')}
+              onFocus={() => setValidate({ status: false, message: '' })}
             />
           </div>
 
-          <button className={`button ${loginStyles['button--signin']}`} onClick={() => getLogin(user, password)}>
-            Sign in
+          <button className={`button ${loginStyles['button--signin']}`} onClick={() => handleSubmit()}>
+            Đăng nhập
           </button>
         </div>
         <div className={loginStyles['signin__right']}>

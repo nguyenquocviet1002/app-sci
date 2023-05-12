@@ -31,12 +31,10 @@ const ModalUpdate = ({ isShowing, hide, element, token, update, data }) => {
   } else {
     dataDefault = data;
   }
-  console.log(dataDefault);
   const [company, setCompany] = useState([]);
   const [companyFilter, setCompanyFilter] = useState([]);
   const [isShow, setIsShow] = useState(false);
   const [valueCompany, setValueCompany] = useState(dataDefault[0].company_name);
-  console.log(valueCompany);
   // state search
   const [info, setInfo] = useState({
     token: token,
@@ -51,6 +49,7 @@ const ModalUpdate = ({ isShowing, hide, element, token, update, data }) => {
     company_id: dataDefault[0].company_code,
     type: dataDefault[0].type,
   });
+
   const handleGetCompany = async () => {
     const { data } = await getCompany(token);
     const dataNew = data.data;
@@ -213,6 +212,7 @@ const ModalUpdate = ({ isShowing, hide, element, token, update, data }) => {
                     className="button modalFooter__search"
                     onClick={() => {
                       update(info);
+                      hide();
                     }}
                   >
                     Lưu thay đổi
