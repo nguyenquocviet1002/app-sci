@@ -1,24 +1,23 @@
-import DataTable from 'react-data-table-component';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { useGetLeads } from '@/services';
-
-import { createForm, getLead, updateForm } from '@/apis/Lead';
-import leadStyles from './Lead.module.scss';
-import ModalSearch from '../ModalSearch/ModalSearch';
 import useModal from '@/hooks/useModal';
+import DataTable from 'react-data-table-component';
+import ModalSearch from '../ModalSearch/ModalSearch';
 import ModalCreate from '../ModalCreate/ModalCreate';
 import ModalUpdate from '../ModalUpdate/ModalUpdate';
 import ModalMore from '../ModalMore/ModalMore';
 
+import leadStyles from './Lead.module.scss';
+
 const Lead = () => {
-  const [dataFinal, setDataFinal] = useState({});
   const [dataLeadItem, setDataLeadItem] = useState([]);
   const [filterSearch, setFilterSearch] = useState(false);
   const [infoFilter, setInfoFilter] = useState([]);
 
   // eslint-disable-next-line no-unused-vars
   const [token, setToken] = useLocalStorage('token', null);
+  const { isShowing, cpn, toggle } = useModal();
 
   const info = useMemo(() => {
     return {
@@ -38,97 +37,24 @@ const Lead = () => {
     };
   }, [token]);
 
-  const { isShowing, cpn, toggle } = useModal();
-
   const { dataLead, isLoadingLead, isSuccessLead, refetchLead } = useGetLeads(info);
   if (isSuccessLead) {
-    dataLead.data.data.shift();
-    console.log('dataLead: ', dataLead.data.data);
+    // dataLead.data.data.shift();
   }
 
-  const addLead = async (info) => {
-    await createForm(info)
-      .then(async ({ data }) => {
-        const info = {
-          token: token,
-          brand_id: '',
-          type: 'seeding',
-          limit: 0,
-          offset: 0,
-          company_id: '',
-          name_fb: '',
-          phone: '',
-          service: '',
-          name: '',
-          start_date: '',
-          end_date: '',
-          user_seeding: '',
-        };
-        await getLead(info)
-          .then(({ data }) => {
-            data.data.shift();
-            // setDataLead(data.data);
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
-  const updateLead = async (info) => {
-    await updateForm(info)
-      .then(async ({ data }) => {
-        const info = {
-          token: token,
-          brand_id: '',
-          type: 'seeding',
-          limit: 0,
-          offset: 0,
-          company_id: '',
-          name_fb: '',
-          phone: '',
-          service: '',
-          name: '',
-          start_date: '',
-          end_date: '',
-          user_seeding: '',
-        };
-        await getLead(info)
-          .then(({ data }) => {
-            data.data.shift();
-            // setDataLead(data.data);
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
   const showMore = async (id) => {
-    const dataOnly = dataLead.filter((item) => item.id === id);
+    const dataOnly = dataLead.data.data.filter((item) => item.id === id);
     setDataLeadItem(dataOnly);
   };
 
-  const showFilter = () => {
-    setFilterSearch(!filterSearch);
+  const showFilter = (info) => {
+    setFilterSearch(true);
+    setInfoFilter(info);
   };
 
-  const showFilter2 = () => {
+  const removeFilter = () => {
     refetchLead();
-    // getLead(info)
-    //   .then(({ data }) => {
-    //     data.data.shift();
-    //     // setDataLead(data.data);
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //   });
-    setFilterSearch(!filterSearch);
+    setFilterSearch(false);
     setInfoFilter([]);
   };
 
@@ -155,7 +81,7 @@ const Lead = () => {
     },
     {
       name: 'Ngày tạo',
-      selector: (row) => row.create_date,
+      selector: (row) => new Date(row.create_date).toLocaleDateString(),
     },
     {
       name: 'Xem thêm',
@@ -219,7 +145,6 @@ const Lead = () => {
         <div className={leadStyles['btn__left']}>
           <button
             className={`${leadStyles['contentLead__btn--search']} btn modal-btn`}
-            data-modal="modal-opacity"
             onClick={() => toggle('ModalSearch')}
           >
             <span>Tìm kiếm</span>
@@ -229,7 +154,10 @@ const Lead = () => {
             ></span>
           </button>
           {filterSearch ? (
-            <button className={`${leadStyles['contentLead__btn--remove']} btn modal-btn`} onClick={() => showFilter2()}>
+            <button
+              className={`${leadStyles['contentLead__btn--remove']} btn modal-btn`}
+              onClick={() => removeFilter()}
+            >
               Xóa bộ lọc
             </button>
           ) : (
@@ -238,7 +166,6 @@ const Lead = () => {
         </div>
         <button
           className={`${leadStyles['contentLead__btn--add']} btn modal-btn`}
-          data-modal="modal-opacity-add"
           onClick={() => toggle('ModalCreate')}
         >
           <span>Thêm mới</span>
@@ -273,6 +200,11 @@ const Lead = () => {
             ) : (
               ''
             )}
+            {infoFilter.user_seeding !== '' ? (
+              <div className={leadStyles['filterItem']}>Tên nhân viên: {infoFilter.user_seeding}</div>
+            ) : (
+              ''
+            )}
             {infoFilter.start_date !== '' ? (
               <div className={leadStyles['filterItem']}>Ngày bắt đầu: {infoFilter.start_date}</div>
             ) : (
@@ -299,15 +231,8 @@ const Lead = () => {
         />
       )}
       <ModalSearch isShowing={isShowing} hide={toggle} element={cpn} token={token} show={showFilter} />
-      <ModalCreate isShowing={isShowing} hide={toggle} element={cpn} token={token} create={addLead} />
-      <ModalUpdate
-        isShowing={isShowing}
-        hide={toggle}
-        element={cpn}
-        token={token}
-        update={updateLead}
-        data={dataLeadItem}
-      />
+      <ModalCreate isShowing={isShowing} hide={toggle} element={cpn} token={token} />
+      <ModalUpdate isShowing={isShowing} hide={toggle} element={cpn} token={token} data={dataLeadItem} />
       <ModalMore isShowing={isShowing} hide={toggle} element={cpn} data={dataLeadItem} />
     </div>
   );

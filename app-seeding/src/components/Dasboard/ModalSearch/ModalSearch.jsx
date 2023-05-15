@@ -20,12 +20,12 @@ const ModalSearch = ({ isShowing, hide, element, token, show }) => {
     company_name: '',
   };
 
+  // state search
+  const [info, setInfo] = useState(initialInfo);
   const [company, setCompany] = useState([]);
   const [companyFilter, setCompanyFilter] = useState([]);
   const [isShow, setIsShow] = useState(false);
   const [valueCompany, setValueCompany] = useState('');
-  // state search
-  const [info, setInfo] = useState(initialInfo);
 
   const { refetchLead } = useGetLeads(info);
 
@@ -83,24 +83,24 @@ const ModalSearch = ({ isShowing, hide, element, token, show }) => {
                     <div className="modal__body">
                       <div className="modal__formControl">
                         <div className="modal__formGroup">
-                          <label htmlFor="password-new" className="modal__label">
+                          <label htmlFor="name" className="modal__label">
                             Họ tên
                           </label>
                           <input
                             type="text"
-                            id="password-new"
+                            id="name"
                             className="modal__input"
                             value={info.name}
                             onChange={handleChange('name')}
                           />
                         </div>
                         <div className="modal__formGroup">
-                          <label htmlFor="password-confirm" className="modal__label">
+                          <label htmlFor="phone" className="modal__label">
                             Số điện thoại
                           </label>
                           <input
                             type="text"
-                            id="password-confirm"
+                            id="phone"
                             className="modal__input"
                             value={info.phone}
                             onChange={handleChange('phone')}
@@ -216,8 +216,9 @@ const ModalSearch = ({ isShowing, hide, element, token, show }) => {
                           show(info);
                           hide();
                           setInfo(initialInfo);
+                          setValueCompany('');
                         }}
-                        style={{ marginTop: '15px' }}
+                        style={{ marginTop: '30px' }}
                       >
                         Tìm kiếm
                       </button>

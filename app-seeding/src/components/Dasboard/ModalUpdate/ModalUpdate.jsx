@@ -1,63 +1,63 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
-import modalSearchStyles from '../ModalSearch/ModalSearch.module.scss';
-import { getCompany } from '@/apis/Lead';
+import { useQuery } from '@tanstack/react-query';
+import { updateLeadFn } from '@/utils/api';
+import { useGetCompany, useGetLeads } from '@/services';
 
-const ModalUpdate = ({ isShowing, hide, element, token, update, data }) => {
-  let dataDefault;
-  if (data.length === 0) {
-    dataDefault = [
-      {
-        brand: '',
-        code_form: '',
-        company_code: '',
-        company_name: '',
-        create_date: '',
-        ctv_user_id: '',
-        ctv_user_name: '',
-        interactive_proof: '',
-        link_fb: '',
-        name: '',
-        name_fb: '',
-        note: '',
-        phone: '',
-        script: '',
-        seeding_user_id: '',
-        seeding_user_name: '',
-        service: '',
-        type: '',
-      },
-    ];
-  } else {
-    dataDefault = data;
-  }
+const ModalUpdate = ({ isShowing, hide, element, token, data }) => {
+  const [info, setInfo] = useState(data[0]);
   const [company, setCompany] = useState([]);
   const [companyFilter, setCompanyFilter] = useState([]);
   const [isShow, setIsShow] = useState(false);
-  const [valueCompany, setValueCompany] = useState(dataDefault[0].company_name);
-  // state search
-  const [info, setInfo] = useState({
+  const [valueCompany, setValueCompany] = useState('');
+
+  const { dataCompany, isSuccessCompany } = useGetCompany(token);
+  const { refetchLead } = useGetLeads({
     token: token,
-    name: dataDefault[0].name,
-    phone: dataDefault[0].phone,
-    link_fb: dataDefault[0].link_fb,
-    name_fb: dataDefault[0].name_fb,
-    service: dataDefault[0].service,
-    note: dataDefault[0].note,
-    script: dataDefault[0].script,
-    interactive_proof: dataDefault[0].interactive_proof,
-    company_id: dataDefault[0].company_code,
-    type: dataDefault[0].type,
+    brand_id: '',
+    type: 'seeding',
+    limit: 0,
+    offset: 0,
+    company_id: '',
+    name_fb: '',
+    phone: '',
+    service: '',
+    name: '',
+    start_date: '',
+    end_date: '',
+    user_seeding: '',
   });
 
-  const handleGetCompany = async () => {
-    const { data } = await getCompany(token);
-    const dataNew = data.data;
-    dataNew.shift();
-    dataNew.pop();
-    setCompany(dataNew);
-    setCompanyFilter(dataNew);
-    setIsShow(true);
+  useEffect(() => {
+    if (data.length !== 0) {
+      setValueCompany(data[0].company_name);
+    }
+  }, [data]);
+  useEffect(() => {
+    if (isSuccessCompany) {
+      setCompany(dataCompany.data.data);
+      setCompanyFilter(dataCompany.data.data);
+    }
+  }, [isSuccessCompany, dataCompany, data, valueCompany]);
+
+  const handleChange = (name) => (event) => {
+    setInfo((prev) => ({ ...prev, [name]: event.target.value }));
+  };
+
+  const queryUpdateLead = useQuery({
+    queryKey: ['updateLead'],
+    queryFn: () => updateLeadFn(info),
+    enabled: false,
+    refetchOnWindowFocus: false,
+    cacheTime: 0,
+    staleTime: 0,
+    onSuccess: () => {
+      refetchLead();
+    },
+  });
+
+  const handleSubmit = () => {
+    // queryUpdateLead.refetch();
   };
 
   const handleValue = (e) => {
@@ -83,143 +83,182 @@ const ModalUpdate = ({ isShowing, hide, element, token, update, data }) => {
       setCompanyFilter(arrNew);
     }
   };
+
   return isShowing && element === 'ModalUpdate'
     ? ReactDOM.createPortal(
         <React.Fragment>
-          <div className="modal" id="modal-opacity-edit" style={{ display: 'flex' }}>
-            <div className="modal-bg"></div>
-            <div className="modal-box animate-opacity">
-              <div className="modal-header">
-                <div className="modal-close" onClick={hide}>
-                  ×
-                </div>
-                <div className="modal-title">Sửa thông tin</div>
-              </div>
-              <div className="modal-body">
-                <div className={modalSearchStyles['modalForm']}>
-                  <div className={modalSearchStyles['modalForm__input']}>
-                    <input
-                      type="text"
-                      placeholder="Họ và tên"
-                      defaultValue={data[0].name}
-                      onChange={(e) => {
-                        setInfo({ ...info, name: e.target.value });
-                      }}
-                    />
-                  </div>
-                  <div className={modalSearchStyles['modalForm__input']}>
-                    <input
-                      type="text"
-                      placeholder="Số điện thoại"
-                      defaultValue={data[0].phone}
-                      onChange={(e) => {
-                        setInfo({ ...info, phone: e.target.value });
-                      }}
-                    />
-                  </div>
-                  <div className={modalSearchStyles['modalForm__input']}>
-                    <input
-                      type="text"
-                      defaultValue={data[0].name_fb}
-                      onChange={(e) => {
-                        setInfo({ ...info, name_fb: e.target.value });
-                      }}
-                    />
-                  </div>
-                  <div className={modalSearchStyles['modalForm__input']}>
-                    <input
-                      type="text"
-                      placeholder="Link FB"
-                      defaultValue={data[0].link_fb}
-                      onChange={(e) => {
-                        setInfo({ ...info, link_fb: e.target.value });
-                      }}
-                    />
-                  </div>
-                  <div className={modalSearchStyles['modalForm__input']}>
-                    <input
-                      type="text"
-                      placeholder="Dịch vụ đăng ký"
-                      defaultValue={data[0].service}
-                      onChange={(e) => {
-                        setInfo({ ...info, service: e.target.value });
-                      }}
-                    />
-                  </div>
-                  <div className={modalSearchStyles['modalForm__input']}>
-                    <input
-                      type="text"
-                      placeholder="Chi nhánh"
-                      defaultValue={valueCompany}
-                      onChange={(e) => handleValue(e.target.value)}
-                      onFocus={() => handleGetCompany()}
-                      onBlur={() => {
-                        setTimeout(() => {
-                          setIsShow(false);
-                        }, 500);
-                      }}
-                    />
-                    <ul
-                      className={modalSearchStyles['select']}
-                      style={isShow ? { display: 'block' } : { display: 'none' }}
-                    >
-                      {companyFilter.map((item, index) => (
-                        <li
-                          key={index}
-                          onClick={() => {
-                            setValueCompany(item.name);
-                            setInfo({ ...info, company_id: item.code });
-                          }}
-                        >
-                          {item.name}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                  <div className={modalSearchStyles['modalForm__input']}>
-                    <input
-                      type="text"
-                      name="script"
-                      defaultValue={data[0].script}
-                      onChange={(e) => {
-                        setInfo({ ...info, script: e.target.value });
-                      }}
-                    />
-                  </div>
-                  <div className={modalSearchStyles['modalForm__input']}>
-                    <input
-                      type="text"
-                      name="interact"
-                      defaultValue={data[0].interactive_proof}
-                      onChange={(e) => {
-                        setInfo({ ...info, interactive_proof: e.target.value });
-                      }}
-                    />
-                  </div>
-                </div>
-                <div className={modalSearchStyles['modalForm']}>
-                  <textarea
-                    placeholder="Ghi chú"
-                    defaultValue={data[0].note}
-                    onChange={(e) => {
-                      setInfo({ ...info, note: e.target.value });
-                    }}
-                  ></textarea>
-                </div>
-                <div className={modalSearchStyles['modal__line']}></div>
-                <div className={modalSearchStyles['modalFooter']}>
-                  <button
-                    className="button modalFooter__search"
-                    onClick={() => {
-                      update(info);
-                      hide();
-                    }}
-                  >
-                    Lưu thay đổi
+          <div>
+            <div className="modal">
+              <div className="modal__box modal__box--search">
+                <div className="modal__content">
+                  <button type="button" className="modal__close" onClick={hide}>
+                    <svg aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"></path>
+                    </svg>
                   </button>
+                  <div className="modal__around">
+                    <h3 className="modal__head">Thêm mới</h3>
+                    <div className="modal__body">
+                      <div className="modal__formControl">
+                        <div className="modal__formGroup">
+                          <label htmlFor="name" className="modal__label">
+                            Họ tên
+                          </label>
+                          <input
+                            type="text"
+                            id="name"
+                            className="modal__input"
+                            defaultValue={data[0].name}
+                            onChange={handleChange('name')}
+                          />
+                        </div>
+                        <div className="modal__formGroup">
+                          <label htmlFor="phone" className="modal__label">
+                            Số điện thoại
+                          </label>
+                          <input
+                            type="text"
+                            id="phone"
+                            className="modal__input"
+                            defaultValue={data[0].phone}
+                            onChange={handleChange('phone')}
+                          />
+                        </div>
+                      </div>
+                      <div className="modal__formControl" style={{ marginTop: '15px' }}>
+                        <div className="modal__formGroup">
+                          <label htmlFor="name-fb" className="modal__label">
+                            Tên FB
+                          </label>
+                          <input
+                            type="text"
+                            id="name-fb"
+                            className="modal__input"
+                            defaultValue={data[0].name_fb}
+                            onChange={handleChange('name_fb')}
+                          />
+                        </div>
+                        <div className="modal__formGroup">
+                          <label htmlFor="link-fb" className="modal__label">
+                            Link FB
+                          </label>
+                          <input
+                            type="text"
+                            id="link-fb"
+                            className="modal__input"
+                            defaultValue={data[0].link_fb}
+                            onChange={handleChange('link_fb')}
+                          />
+                        </div>
+                      </div>
+                      <div className="modal__formControl" style={{ marginTop: '15px' }}>
+                        <div className="modal__formGroup">
+                          <label htmlFor="service" className="modal__label">
+                            Dịch vụ
+                          </label>
+                          <input
+                            type="text"
+                            id="service"
+                            className="modal__input"
+                            defaultValue={data[0].service}
+                            onChange={handleChange('service')}
+                          />
+                        </div>
+                        <div className="modal__formGroup">
+                          <label htmlFor="company" className="modal__label">
+                            Chi nhánh
+                          </label>
+                          <input
+                            type="text"
+                            id="company"
+                            className="modal__input"
+                            autoComplete="off"
+                            defaultValue={valueCompany}
+                            onChange={(e) => handleValue(e.target.value)}
+                            onFocus={() => setIsShow(true)}
+                            onBlur={() => {
+                              setTimeout(() => {
+                                setIsShow(false);
+                              }, 500);
+                            }}
+                          />
+                          <ul
+                            className="modal__selectCompany"
+                            style={isShow ? { display: 'block' } : { display: 'none' }}
+                          >
+                            {companyFilter.map((item, index) => (
+                              <li
+                                key={index}
+                                onClick={() => {
+                                  setValueCompany(item.name);
+                                  setInfo({ ...info, company_id: item.code, company_name: item.name });
+                                }}
+                              >
+                                {item.name}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                      <div className="modal__formControl" style={{ marginTop: '15px' }}>
+                        <div className="modal__formGroup">
+                          <label htmlFor="script" className="modal__label">
+                            Kịch bản
+                          </label>
+                          <input
+                            type="text"
+                            id="script"
+                            className="modal__input"
+                            defaultValue={data[0].script}
+                            onChange={handleChange('script')}
+                          />
+                        </div>
+                        <div className="modal__formGroup">
+                          <label htmlFor="interactive-proof" className="modal__label">
+                            Tương tác
+                          </label>
+                          <input
+                            type="text"
+                            id="interactive-proof"
+                            className="modal__input"
+                            defaultValue={data[0].interactive_proof}
+                            onChange={handleChange('interactive_proof')}
+                          />
+                        </div>
+                      </div>
+                      <div className="modal__formControl" style={{ marginTop: '15px' }}>
+                        <div className="modal__formGroup modal__formGroup--single">
+                          <label htmlFor="note" className="modal__label">
+                            Ghi chú
+                          </label>
+                          <textarea
+                            id="note"
+                            rows="4"
+                            className="modal__input"
+                            defaultValue={data[0].note}
+                            onChange={handleChange('note')}
+                          ></textarea>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        className="modal__submit modal__submit--1"
+                        onClick={() => {
+                          handleSubmit();
+                          // hide();
+                          // setInfo(initialInfo);
+                          // setValueCompany('');
+                        }}
+                        style={{ marginTop: '30px' }}
+                      >
+                        Thêm mới
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
+            <div className="modal__bg" onClick={hide}></div>
           </div>
         </React.Fragment>,
         document.body,

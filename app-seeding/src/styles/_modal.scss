@@ -67,6 +67,9 @@
     width: calc(50% - 10px);
     margin: 0 5px;
     position: relative;
+    &--single {
+      width: 100%;
+    }
   }
   &__label {
     color: #111827;
@@ -74,7 +77,8 @@
     display: block;
     margin-bottom: 0.5rem;
   }
-  &__input {
+  &__input,
+  &__link {
     color: #111827;
     padding: 0.625rem;
     background-color: #f9fafb;
@@ -82,6 +86,14 @@
     border-radius: 0.5rem;
     width: 100%;
     display: block;
+    outline: none;
+  }
+  &__link {
+    color: #1c64f2;
+    transition: all 0.3s;
+    &:hover {
+      border-color: #1c64f2;
+    }
   }
   &__selectCompany {
     position: absolute;
@@ -140,6 +152,12 @@
     width: 100%;
     border: none;
     cursor: pointer;
+    &--1 {
+      max-width: 110px;
+      margin-left: auto;
+      margin-right: 0;
+      display: block;
+    }
   }
   &__bg {
     background-color: #11182780;

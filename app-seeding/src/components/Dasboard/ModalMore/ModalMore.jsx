@@ -1,99 +1,145 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import modalSearchStyles from '../ModalSearch/ModalSearch.module.scss';
 
-const ModalMore = ({ isShowing, hide, element, data }) =>
-  isShowing && element === 'ModalMore'
+const ModalMore = ({ isShowing, hide, element, data }) => {
+  return isShowing && element === 'ModalMore'
     ? ReactDOM.createPortal(
         <React.Fragment>
-          <div className="modal" id="modal-opacity-edit" style={{ display: 'flex' }}>
-            <div className="modal-bg"></div>
-            <div className="modal-box animate-opacity">
-              <div className="modal-header">
-                <div className="modal-close" onClick={hide}>
-                  ×
-                </div>
-                <div className="modal-title">Chi tiết</div>
-              </div>
-              <div className="modal-body">
-                <div className={modalSearchStyles['modalForm--2']}>
-                  <div
-                    className={modalSearchStyles['modalForm__input']}
-                    style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
-                  >
-                    <label>Mã</label>
-                    <input type="text" defaultValue={data[0].code_form} disabled />
-                  </div>
-                  <div
-                    className={modalSearchStyles['modalForm__input']}
-                    style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
-                  >
-                    <label>Họ và tên</label>
-                    <input type="text" defaultValue={data[0].name} disabled />
-                  </div>
-                  <div
-                    className={modalSearchStyles['modalForm__input']}
-                    style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
-                  >
-                    <label>Số điện thoại</label>
-                    <input type="text" defaultValue={data[0].phone} disabled />
-                  </div>
-                  <div
-                    className={modalSearchStyles['modalForm__input']}
-                    style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
-                  >
-                    <label>Facebook</label>
-                    <a href={data[0].link_fb}>{data[0].name_fb}</a>
-                  </div>
-                  <div
-                    className={modalSearchStyles['modalForm__input']}
-                    style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
-                  >
-                    <label>Dịch vụ đăng ký</label>
-                    <input type="text" defaultValue={data[0].service} disabled />
-                  </div>
-                  <div
-                    className={modalSearchStyles['modalForm__input']}
-                    style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
-                  >
-                    <label>Chi nhánh</label>
-                    <input type="text" defaultValue={data[0].company_name} disabled />
-                  </div>
-                  <div
-                    className={modalSearchStyles['modalForm__input']}
-                    style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
-                  >
-                    <label>Kịch bản</label>
-                    <input type="text" defaultValue={data[0].script} disabled />
-                  </div>
-                  <div
-                    className={modalSearchStyles['modalForm__input']}
-                    style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
-                  >
-                    <label>Tương tác</label>
-                    <input type="text" defaultValue={data[0].interactive_proof} disabled />
-                  </div>
-                  <div
-                    className={modalSearchStyles['modalForm__input']}
-                    style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
-                  >
-                    <label>Thời gian</label>
-                    <input type="text" defaultValue={data[0].create_date} disabled />
-                  </div>
-                  <div
-                    className={modalSearchStyles['modalForm__input']}
-                    style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
-                  >
-                    <label>Ghi chú</label>
-                    <input type="text" defaultValue={data[0].note} disabled />
+          <div>
+            <div className="modal">
+              <div className="modal__box modal__box--search">
+                <div className="modal__content">
+                  <button type="button" className="modal__close" onClick={hide}>
+                    <svg aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"></path>
+                    </svg>
+                  </button>
+                  <div className="modal__around">
+                    <h3 className="modal__head">Thông tin</h3>
+                    <div className="modal__body">
+                      <div className="modal__formControl">
+                        <div className="modal__formGroup">
+                          <label htmlFor="code" className="modal__label">
+                            Mã
+                          </label>
+                          <input
+                            type="text"
+                            id="code"
+                            className="modal__input"
+                            defaultValue={data[0].code_form}
+                            disabled
+                          />
+                        </div>
+                        <div className="modal__formGroup">
+                          <label htmlFor="name" className="modal__label">
+                            Họ tên
+                          </label>
+                          <input type="text" id="name" className="modal__input" defaultValue={data[0].name} disabled />
+                        </div>
+                      </div>
+                      <div className="modal__formControl" style={{ marginTop: '15px' }}>
+                        <div className="modal__formGroup">
+                          <label htmlFor="phone" className="modal__label">
+                            Số điện thoại
+                          </label>
+                          <input
+                            type="text"
+                            id="phone"
+                            className="modal__input"
+                            defaultValue={data[0].phone}
+                            disabled
+                          />
+                        </div>
+                        <div className="modal__formGroup">
+                          <label className="modal__label">Facebook</label>
+                          <a className="modal__link" href={data[0].link_fb} target="_blank" rel="noreferrer">
+                            {data[0].name_fb}
+                          </a>
+                        </div>
+                      </div>
+                      <div className="modal__formControl" style={{ marginTop: '15px' }}>
+                        <div className="modal__formGroup">
+                          <label htmlFor="service" className="modal__label">
+                            Dịch vụ
+                          </label>
+                          <input
+                            type="text"
+                            id="service"
+                            className="modal__input"
+                            defaultValue={data[0].service}
+                            disabled
+                          />
+                        </div>
+                        <div className="modal__formGroup">
+                          <label htmlFor="company" className="modal__label">
+                            Chi nhánh
+                          </label>
+                          <input
+                            type="text"
+                            id="company"
+                            className="modal__input"
+                            defaultValue={data[0].company_name}
+                            disabled
+                          />
+                        </div>
+                      </div>
+                      <div className="modal__formControl" style={{ marginTop: '15px' }}>
+                        <div className="modal__formGroup">
+                          <label htmlFor="script" className="modal__label">
+                            Kịch bản
+                          </label>
+                          <input type="text" id="script" className="modal__input" defaultValue={data[0].script} />
+                        </div>
+                        <div className="modal__formGroup">
+                          <label htmlFor="interactive-proof" className="modal__label">
+                            Tương tác
+                          </label>
+                          <input
+                            type="text"
+                            id="interactive-proof"
+                            className="modal__input"
+                            defaultValue={data[0].interactive_proof}
+                            disabled
+                          />
+                        </div>
+                      </div>
+                      <div className="modal__formControl" style={{ marginTop: '15px' }}>
+                        <div className="modal__formGroup">
+                          <label htmlFor="time" className="modal__label">
+                            Thời gian
+                          </label>
+                          <input
+                            type="text"
+                            id="time"
+                            className="modal__input"
+                            defaultValue={new Date(data[0].create_date).toLocaleString()}
+                            disabled
+                          />
+                        </div>
+                        <div className="modal__formGroup">
+                          <label htmlFor="note" className="modal__label">
+                            Ghi chú
+                          </label>
+                          <textarea
+                            id="note"
+                            rows="1"
+                            className="modal__input"
+                            disabled
+                            defaultValue={data[0].note}
+                          ></textarea>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
+            <div className="modal__bg" onClick={hide}></div>
           </div>
         </React.Fragment>,
         document.body,
       )
     : null;
+};
 
 export default ModalMore;
