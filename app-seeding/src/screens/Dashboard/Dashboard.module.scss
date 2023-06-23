@@ -1,5 +1,21 @@
-.box__body {
-    background-color: #efefef;
-    min-height: 100vh;
-    height: 100%;
+.main {
+  &__layout {
+    position: relative;
+  }
+  &__body {
+    padding-top: 4.375rem;
+    margin-left: 15rem;
+    transition: all 0.2s ease;
+  }
+  &__content {
+    padding-top: 1.525rem;
+  }
+  @media (max-width: 1024px) {
+    &__body {
+      margin-left: 0;
+      &.hide {
+        margin-left: 15rem;
+      }
+    }
+  }
 }

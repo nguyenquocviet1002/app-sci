@@ -1,10 +1,14 @@
-import Login from '@/components/Login/Login';
-import React from 'react';
+import { Navigate } from 'react-router-dom';
+import { useLocalStorage } from '@/hooks/useLocalStorage';
 
-const ScreensLogin = () => (
-  <div>
-    <Login />
-  </div>
-);
+import Login from '@/components/Login';
 
-export default ScreensLogin;
+export default function ScreenLogin() {
+  // eslint-disable-next-line no-unused-vars
+  const [token, setToken] = useLocalStorage('token', null);
+  if (token) {
+    return <Navigate to="/dashboard/form" />;
+  }
+
+  return <Login />;
+}

@@ -8,16 +8,22 @@ import './styles/style.scss';
 
 import ScreensRoot from './screens/Root';
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false
+    }
+  }
+});
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  // <React.StrictMode>
-  <QueryClientProvider client={queryClient}>
-    <ScreensRoot />
-    <ReactQueryDevtools initialIsOpen={false} />
-  </QueryClientProvider>
-  // </React.StrictMode>,
+  <React.StrictMode>
+    <QueryClientProvider client={queryClient}>
+      <ScreensRoot />
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
+  </React.StrictMode>,
 );
 
 // If you want to start measuring performance in your app, pass a function

@@ -1,0 +1,70 @@
+.expenseContent {
+  display: flex;
+  gap: 12px;
+  margin: 30px 0;
+  width: 100%;
+
+  &__chart {
+    width: 60%;
+
+    &--success {
+      width: 50%;
+
+      & .title {
+        font-size: 12px;
+        text-transform: uppercase;
+        background-color: #1a73e8;
+        text-align: center;
+        padding: 4px 0px;
+        color: #fff;
+        border-radius: 8px;
+      }
+    }
+
+    &--line {
+      width: 50%;
+    }
+  }
+
+  &__table {
+    width: 40%;
+  }
+
+  @media (max-width: 1024px) {
+    &__chart {
+      width: 50%;
+    }
+
+    &__table {
+      width: 50%;
+    }
+  }
+
+  @media (max-width: 820px) {
+    flex-flow: wrap;
+
+    &__chart {
+      width: 100%;
+
+      &--success {
+        width: 100%;
+      }
+
+      &--line {
+        width: 100%;
+      }
+    }
+
+    &__table {
+      width: 100%;
+    }
+  }
+
+  @media (max-width: 768px) {
+    margin: 15px 0;
+
+    & .title {
+      font-size: 13px;
+    }
+  }
+}

@@ -1,13 +1,12 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 
-import { getTokenFn } from '@/utils/api';
-
 import loginStyles from './Login.module.scss';
+import { getTokenFn } from '@/api/auth';
 
-const Login = () => {
+export default function Login() {
   const navigate = useNavigate();
   const initialLogin = {
     user: '',
@@ -28,15 +27,12 @@ const Login = () => {
     queryKey: ['login', infoUser],
     queryFn: () => getTokenFn(infoUser),
     enabled: false,
-    refetchOnWindowFocus: false,
-    cacheTime: 60000,
-    staleTime: Infinity,
     onSuccess: (data) => {
       if (data.data.message) {
         setValidate({ status: true, message: 'Số điện thoại hoặc mật khẩu không đúng' });
       } else {
         setToken(data.data.access_token);
-        navigate('/dashboard/lead');
+        navigate('/dashboard/form');
       }
     },
   });
@@ -88,6 +84,4 @@ const Login = () => {
       </div>
     </div>
   );
-};
-
-export default Login;
+}
