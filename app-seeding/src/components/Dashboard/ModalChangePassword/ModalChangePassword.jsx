@@ -51,8 +51,9 @@ export default function ModalChangePassword({ isShowing, hide, element }) {
                     <path d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"></path>
                   </svg>
                 </button>
+                <h4 className="modal__head">Đổi mật khẩu</h4>
+                <div className="modal__line"></div>
                 <div className="modal__around">
-                  <h3 className="modal__head">Đổi mật khẩu</h3>
                   {validate.status && <span className="modal__error">{validate.message}</span>}
                   <div className="modal__body">
                     <div>
@@ -68,7 +69,7 @@ export default function ModalChangePassword({ isShowing, hide, element }) {
                         onFocus={() => setValidate({ status: false, message: '' })}
                       />
                     </div>
-                    <div style={{ margin: '25px 0' }}>
+                    <div style={{ margin: '20px 0' }}>
                       <label htmlFor="password-confirm" className="modal__label">
                         Xác nhận mật khẩu
                       </label>

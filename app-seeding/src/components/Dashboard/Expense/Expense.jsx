@@ -1,301 +1,389 @@
-import { useEffect, useMemo, useState } from 'react';
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Legend } from 'chart.js';
+import { Doughnut, Bar } from 'react-chartjs-2';
+import { useEffect, useState } from 'react';
 import { NavLink, useMatch } from 'react-router-dom';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
-import { getCustomerSuccess, getNumberBrand, getRevenue } from '@/utils/reportNumber';
-import { useGetForm } from '@/services/formService';
-import { useGetBooking } from '@/services/bookingService';
 import { useGetAllUser, useGetUser } from '@/services/userService';
+import { useGetBrand } from '@/services/reportService';
 import { removeFirstItem } from '@/utils/removeFirstItem';
+import { getCustomerSuccess, getRevenue, getRevenueByYear } from '@/utils/reportNumber';
+import { formatMoney } from '@/utils/formatMoney';
 
-import Loading from '@/components/UI/Loading';
-
+import quantityFBStyles from '../QuantityFB/QuantityFB.module.scss';
+import quantitySuccessStyles from '../QuantitySuccess/QuantitySuccess.module.scss';
 import expenseStyles from './Expense.module.scss';
 
-import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement } from 'chart.js';
-import { Bar } from 'react-chartjs-2';
-import { formatMoney } from '@/utils/formatMoney';
-import { useGetBrand } from '@/services/reportService';
-
-ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement);
-
+ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Legend);
 const options = {
   responsive: true,
   plugins: {
     legend: {
-      position: 'top',
-    },
-    title: {
-      display: true,
-      text: 'Chart.js Bar Chart',
+      position: 'bottom',
     },
   },
 };
 
 export default function Expense() {
-  const [user, setUser] = useState('');
+  const [dataTarget, setDataTarget] = useState([]);
+  const [dataPrice, setDataPrice] = useState([]);
+  const [dataPriceBrand, setDataPriceBrand] = useState([]);
+  const [user, setUser] = useState({ label: 'Nhân viên', value: '' });
+  const [isShow, setIsShow] = useState(false);
+  const [isShow2, setIsShow2] = useState(false);
   const [inputDate, setInputDate] = useState({
     startDate: '',
     endDate: '',
   });
-  const [changeSearch, setChangeSearch] = useState('');
-  const [filter, setFilter] = useState('');
-  const [dataPrice, setDataPrice] = useState([]);
-  const [dataPriceBrand, setDataPriceBrand] = useState([]);
-  const [dataPriceBrandLable, setDataPriceBrandLable] = useState([]);
-  const [codeUser, setCodeUser] = useState('');
+  const [searchValue, setSearchValue] = useState('');
+  const [filter, setFilter] = useState({ label: 'Thương hiệu', value: '' });
 
   // eslint-disable-next-line no-unused-vars
   const [token, setToken] = useLocalStorage('token', null);
-  const initialForm = useMemo(() => {
-    return {
-      token: token,
-      brand_id: '',
-      type: 'seeding',
-      limit: 0,
-      offset: 0,
-      company_id: '',
-      name_fb: '',
-      phone: '',
-      service: '',
-      name: '',
-      start_date: '',
-      end_date: '',
-      user_seeding: user,
-    };
-  }, [token, user]);
-
-  const initialBooking = useMemo(() => {
-    return {
-      token: token,
-      type: 'opportunity',
-      check: 'seeding',
-      limit: '',
-      offset: '',
-      start_date: '',
-      end_date: '',
-      name: '',
-      phone: '',
-      code: '',
-      user_seeding: user,
-    };
-  }, [token, user]);
-
-  const { dataForm, isSuccessForm, isFetchingForm, refetchForm } = useGetForm(initialForm);
-  const { dataBooking, isSuccessBooking, isFetchingBooking, refetchBooking } = useGetBooking(initialBooking);
-  const { dataBrands, isSuccessBrand, isFetchingBrand } = useGetBrand(token);
-  const { dataUser, isSuccessUser } = useGetUser(token);
   const { dataAllUser, isSuccessAllUser } = useGetAllUser({ token: token, code_user: '' });
+  const { dataUser, isSuccessUser } = useGetUser(token);
+  const { dataBrands, isSuccessBrand } = useGetBrand(token);
 
   useEffect(() => {
-    if (isSuccessUser) {
-      dataUser.data.data.code_seeding === false
-        ? setCodeUser('US0000015')
-        : setCodeUser(dataUser.data.data.code_seeding);
+    if (isSuccessUser && dataUser.data.data.rule === 'user') {
+      setUser({ label: dataUser.data.data.username, value: dataUser.data.data.code_seeding });
     }
-  }, [dataUser, isSuccessUser, token, codeUser]);
-
-  const matchFbMonth = useMatch('/dashboard/quantity/fb-month');
-  const matchFbYear = useMatch('/dashboard/quantity/fb-year');
-  const matchFbAbout = useMatch('/dashboard/quantity/fb-about');
+  }, [isSuccessUser, dataUser]);
 
   useEffect(() => {
-    if (matchFbMonth) {
+    if (isSuccessUser && isSuccessAllUser) {
+      const dataUserTarget = removeFirstItem(dataAllUser).filter((item) => {
+        return item.code_user === user.value;
+      });
+
+      if (dataUserTarget.length !== 0) {
+        const targetSet = [dataUserTarget[0].kpi_now, dataUserTarget[0].kpi_target - dataUserTarget[0].kpi_now];
+        setDataTarget(targetSet);
+      } else {
+        setDataTarget([1, 0]);
+      }
+    }
+  }, [isSuccessUser, isSuccessAllUser, dataUser, dataAllUser, user]);
+
+  useEffect(() => {
+    if (isSuccessUser && dataUser.data.data.rule === 'user') {
+      setUser({ label: dataUser.data.data.username, value: dataUser.data.data.code_seeding });
+    }
+  }, [isSuccessUser, dataUser]);
+
+  const matchExMonth = useMatch('/dashboard/expense/month');
+  const matchExYear = useMatch('/dashboard/expense/year');
+  const matchExAbout = useMatch('/dashboard/expense/about');
+
+  useEffect(() => {
+    if (matchExMonth) {
       const date = new Date();
       const year = date.getFullYear();
       const month = date.getMonth();
       const firstDay = new Date(year, month, 1);
       const lastDay = new Date(year, month + 1, 0);
-      if (isSuccessBooking && isSuccessForm) {
-        getNumberBrand(firstDay, lastDay, token, user)
-          .then((data) => {})
-          .catch((err) => {
-            console.log(err);
-          });
-      }
-    } else if (matchFbYear) {
+      getCustomerSuccess(searchValue, filter.value, firstDay, lastDay, token, user.value)
+        .then((data) => setDataPrice(data.tong_tien))
+        .catch((err) => console.log(err));
+      getRevenue(firstDay, lastDay, token, user.value)
+        .then((data) => setDataPriceBrand(data))
+        .catch((err) => console.log(err));
+    } else if (matchExYear) {
       const date = new Date();
       const year = date.getFullYear();
       const firstDay = new Date(year, 0, 1);
       const lastDay = new Date(year, 11, 31);
-
-      if (isSuccessBooking && isSuccessForm) {
-        getNumberBrand(firstDay, lastDay, token, user)
-          .then((data) => {})
-          .catch((err) => {
-            console.log(err);
-          });
-      }
+      getCustomerSuccess(searchValue, filter.value, firstDay, lastDay, token, user.value)
+        .then((data) => setDataPrice(data.tong_tien))
+        .catch((err) => console.log(err));
+      getRevenueByYear(firstDay, lastDay, token, user.value)
+        .then((data) => setDataPriceBrand(data))
+        .catch((err) => console.log(err));
+    } else if (matchExAbout) {
+      getCustomerSuccess(searchValue, filter.value, inputDate.startDate, inputDate.endDate, token, user.value)
+        .then((data) => setDataPrice(data.tong_tien))
+        .catch((err) => console.log(err));
+      getRevenue(inputDate.startDate, inputDate.endDate, token, user.value)
+        .then((data) => setDataPriceBrand(data))
+        .catch((err) => console.log(err));
     } else {
       const curr = new Date(); // get current date
       const first = curr.getDate() - curr.getDay() + 1; // First day is the day of the month - the day of the week
       const last = first + 6; // last day is the first day + 6
       const firstDay = new Date(curr.setDate(first));
       const lastDay = new Date(curr.setDate(last));
-      getCustomerSuccess(changeSearch, filter, firstDay, lastDay, token, user)
-        .then((data) => {
-          setDataPrice(data);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-      getRevenue(firstDay, lastDay, user, token)
-        .then((data) => {
-          setDataPriceBrand(data);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      getCustomerSuccess(searchValue, filter.value, firstDay, lastDay, token, user.value)
+        .then((data) => setDataPrice(data.tong_tien))
+        .catch((err) => console.log(err));
+      getRevenue(firstDay, lastDay, token, user.value)
+        .then((data) => setDataPriceBrand(data))
+        .catch((err) => console.log(err));
     }
-  }, [
-    dataBooking,
-    dataForm,
-    isSuccessBooking,
-    isSuccessForm,
-    matchFbMonth,
-    matchFbAbout,
-    matchFbYear,
-    token,
-    user,
-    changeSearch,
-    filter,
-  ]);
+  }, [matchExMonth, matchExAbout, matchExYear, token, user, searchValue, filter, inputDate]);
 
-  useEffect(() => {
-    if (dataPriceBrand.length !== 0) {
-      const dataBrand = {
-        labels: dataPriceBrand.data.date,
-        datasets: [
-          {
-            label: 'All',
-            data: dataPriceBrand.data.all,
-            backgroundColor: 'rgba(255, 99, 132, 0.5)',
-          },
-          {
-            label: 'KN',
-            data: dataPriceBrand.data.kn,
-            backgroundColor: 'rgba(53, 162, 235, 0.5)',
-          },
-          {
-            label: 'DA',
-            data: dataPriceBrand.data.da,
-            backgroundColor: 'rgba(255, 99, 132, 0.5)',
-          },
-          {
-            label: 'HH',
-            data: dataPriceBrand.data.hh,
-            backgroundColor: 'rgba(53, 162, 235, 0.5)',
-          },
-          {
-            label: 'PR',
-            data: dataPriceBrand.data.pr,
-            backgroundColor: 'rgba(255, 99, 132, 0.5)',
-          },
-        ],
-      };
-      setDataPriceBrandLable(dataBrand);
+  const showDropdown = (id) => {
+    if (id === 1) {
+      setIsShow(!isShow);
+    } else {
+      setIsShow2(!isShow2);
     }
-  }, [dataPriceBrand]);
+  };
+
+  const setValue = (e, id) => {
+    if (id === 1) {
+      setUser({ label: e.target.textContent, value: e.target.id });
+      showDropdown(id);
+    } else {
+      setFilter({ label: e.target.textContent, value: e.target.id });
+      showDropdown(id);
+    }
+  };
+
+  const handelRange = () => {
+    getCustomerSuccess(searchValue, filter.value, inputDate.startDate, inputDate.endDate, token, user.value)
+      .then((data) => setDataPrice(data.tong_tien))
+      .catch((err) => console.log(err));
+    getRevenue(inputDate.startDate, inputDate.endDate, token, user.value)
+      .then((data) => setDataPriceBrand(data))
+      .catch((err) => console.log(err));
+  };
+
+  const dataTargetDoughnut = {
+    labels: ['Doanh số đã đạt', 'Doanh số chưa đạt'],
+    datasets: [
+      {
+        label: 'Doanh số',
+        data: dataTarget,
+        backgroundColor: ['rgba(255, 99, 132, 0.2)', 'rgba(54, 162, 235, 0.2)'],
+        borderColor: ['rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)'],
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  const dataBrand = {
+    labels: dataPriceBrand.labels,
+    datasets: [
+      {
+        label: 'Tất cả',
+        data: dataPriceBrand.all,
+        backgroundColor: '#ff6384',
+      },
+      {
+        label: 'Kangnam',
+        data: dataPriceBrand.kn,
+        backgroundColor: '#ff9f40',
+      },
+      {
+        label: 'Đông Á',
+        data: dataPriceBrand.da,
+        backgroundColor: '#4bc0c0',
+      },
+      {
+        label: 'Hồng Hà',
+        data: dataPriceBrand.hh,
+        backgroundColor: '#9966ff',
+      },
+      {
+        label: 'Paris',
+        data: dataPriceBrand.pr,
+        backgroundColor: '#36a2eb',
+      },
+    ],
+  };
 
   return (
     <>
-      {isFetchingForm && isFetchingBooking && isFetchingBrand && <Loading />}
-      <div className={expenseStyles['quantity__screen']}>
-        <div className={expenseStyles['menuLead']}>
-          <NavLink
-            to="fb-week"
-            className={({ isActive }) =>
-              isActive
-                ? `${expenseStyles['menuLead__tabs']} ${expenseStyles['active']}`
-                : expenseStyles['menuLead__tabs']
-            }
-          >
-            Tuần
-          </NavLink>
-          <NavLink
-            to="fb-month"
-            className={({ isActive }) =>
-              isActive
-                ? `${expenseStyles['menuLead__tabs']} ${expenseStyles['active']}`
-                : expenseStyles['menuLead__tabs']
-            }
-          >
-            Tháng
-          </NavLink>
-          <NavLink
-            to="fb-year"
-            className={({ isActive }) =>
-              isActive
-                ? `${expenseStyles['menuLead__tabs']} ${expenseStyles['active']}`
-                : expenseStyles['menuLead__tabs']
-            }
-          >
-            Năm
-          </NavLink>
-          <NavLink
-            to="fb-about"
-            className={({ isActive }) =>
-              isActive
-                ? `${expenseStyles['menuLead__tabs']} ${expenseStyles['active']}`
-                : expenseStyles['menuLead__tabs']
-            }
-          >
-            Khoảng ngày
-          </NavLink>
+      <div className={quantityFBStyles['quantityFB__head']}>
+        <div className={quantityFBStyles['quantityFB__filter']}>
+          <div className={quantityFBStyles['quantityFB__title']}>Báo Cáo Chi Phí</div>
+          <div className={quantityFBStyles['quantityFB__cta']}>
+            <div className={quantityFBStyles['quantityFB__nav']}>
+              <NavLink
+                to="week"
+                className={({ isActive }) =>
+                  isActive
+                    ? `${quantityFBStyles['quantityFB__navItem']} ${quantityFBStyles['active']}`
+                    : quantityFBStyles['quantityFB__navItem']
+                }
+              >
+                Tuần
+              </NavLink>
+              <NavLink
+                to="month"
+                className={({ isActive }) =>
+                  isActive
+                    ? `${quantityFBStyles['quantityFB__navItem']} ${quantityFBStyles['active']}`
+                    : quantityFBStyles['quantityFB__navItem']
+                }
+              >
+                Tháng
+              </NavLink>
+              <NavLink
+                to="year"
+                className={({ isActive }) =>
+                  isActive
+                    ? `${quantityFBStyles['quantityFB__navItem']} ${quantityFBStyles['active']}`
+                    : quantityFBStyles['quantityFB__navItem']
+                }
+              >
+                Năm
+              </NavLink>
+              <NavLink
+                to="about"
+                className={({ isActive }) =>
+                  isActive
+                    ? `${quantityFBStyles['quantityFB__navItem']} ${quantityFBStyles['active']}`
+                    : quantityFBStyles['quantityFB__navItem']
+                }
+              >
+                Khoảng ngày
+              </NavLink>
+            </div>
+            {isSuccessUser && dataUser.data.data.rule === 'admin' && (
+              <div className={quantityFBStyles['quantityFB__select']}>
+                <button className={quantityFBStyles['quantityFB__selectBtn']} onClick={() => showDropdown(1)}>
+                  {user.label}
+                </button>
+                {isShow ? (
+                  <div className={quantityFBStyles['quantityFB__selectDropdown']}>
+                    <div className={quantityFBStyles['quantityFB__selectItem']} id="" onClick={(e) => setValue(e, 1)}>
+                      Tất cả
+                    </div>
+                    {isSuccessAllUser &&
+                      removeFirstItem(dataAllUser).map((item, index) => (
+                        <div
+                          key={index}
+                          id={item.code_user}
+                          className={quantityFBStyles['quantityFB__selectItem']}
+                          onClick={(e) => setValue(e, 1)}
+                        >
+                          {item.name}
+                        </div>
+                      ))}
+                  </div>
+                ) : null}
+              </div>
+            )}
+          </div>
         </div>
-        <select
-          onChange={(e) => {
-            setUser(e.target.value);
-            setTimeout(() => {
-              refetchForm();
-              refetchBooking();
-            }, 0);
-          }}
-        >
-          <option value="">Nhân viên</option>
-          {isSuccessAllUser &&
-            removeFirstItem(dataAllUser).map((item, index) => (
-              <option key={index} value={item.code_user}>
-                {item.name}
-              </option>
-            ))}
-        </select>
-        {matchFbAbout && (
-          <>
-            <input type="date" onChange={(e) => setInputDate({ ...inputDate, startDate: e.target.value })} />
-            <input type="date" onChange={(e) => setInputDate({ ...inputDate, endDate: e.target.value })} />
-            <button>Submit</button>
-          </>
+        {matchExAbout && (
+          <div className={quantityFBStyles['quantityFB__date']}>
+            <div className={quantityFBStyles['quantityFB__dateGroup']}>
+              <label className={quantityFBStyles['quantityFB__dateLabel']}>Ngày bắt đầu</label>
+              <input
+                type="date"
+                className={quantityFBStyles['quantityFB__dateInput']}
+                onChange={(e) => setInputDate({ ...inputDate, startDate: e.target.value })}
+              />
+            </div>
+            <div className={quantityFBStyles['quantityFB__dateGroup']}>
+              <label className={quantityFBStyles['quantityFB__dateLabel']}>Ngày kết thúc</label>
+              <input
+                type="date"
+                className={quantityFBStyles['quantityFB__dateInput']}
+                onChange={(e) => setInputDate({ ...inputDate, endDate: e.target.value })}
+              />
+            </div>
+            <button className={quantityFBStyles['quantityFB__dateSubmit']} onClick={() => handelRange()}>
+              Tìm
+            </button>
+          </div>
         )}
-        <input type="text" placeholder="search" onChange={(e) => setChangeSearch(e.target.value)} />
-        <select onChange={(e) => setFilter(e.target.value)}>
-          <option value="">Thương hiệu</option>
-          {isSuccessBrand &&
-            dataBrands.data.data.map((item, index) => (
-              <option key={index} value={item.code}>
-                {item.name}
-              </option>
-            ))}
-        </select>
-        <table>
-          <thead>
-            <tr>
-              <td>STT</td>
-              <td>Dịch vụ</td>
-              <td>Doanh thu</td>
-            </tr>
-          </thead>
-          <tbody>
-            {dataPrice.length !== 0 &&
-              dataPrice.tong_tien.map((item, index) => (
-                <tr key={index}>
-                  <td>{index + 1}</td>
-                  <td>{item.group_service}</td>
-                  <td>{formatMoney(item.tong_tien)}</td>
-                </tr>
-              ))}
-          </tbody>
-        </table>
-        {dataPriceBrandLable.length !== 0 && <Bar options={options} data={dataPriceBrandLable} />}
+      </div>
+
+      <div>
+        <div className={quantityFBStyles['quantityFB__body']}>
+          <div className={expenseStyles['expense__chart']}>
+            <div className={quantityFBStyles['quantityFB__item']}>
+              <div className={expenseStyles['expense__title']}>Mục Tiêu</div>
+              <div className={expenseStyles['expense__container']}>
+                <Doughnut options={options} data={dataTargetDoughnut} />
+              </div>
+            </div>
+          </div>
+          <div className={`${quantityFBStyles['quantityFB__table']} ${expenseStyles['expense__table']}`}>
+            <div className={quantityFBStyles['quantityFB__item']}>
+              <div className={expenseStyles['expense__title']}>Doanh Thu Theo Dịch Vụ</div>
+              <div className={quantitySuccessStyles['quantitySS__filter']}>
+                <div style={{ position: 'relative' }}>
+                  <input
+                    type="text"
+                    className={quantitySuccessStyles['quantitySS__filterSearch']}
+                    placeholder="Tìm theo tên dịch vụ..."
+                    onChange={(e) => setSearchValue(e.target.value)}
+                    value={searchValue}
+                  />
+                  {searchValue && (
+                    <span className={quantitySuccessStyles['quantitySS__reset']} onClick={() => setSearchValue('')}>
+                      <svg
+                        aria-hidden="true"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"></path>
+                      </svg>
+                    </span>
+                  )}
+                </div>
+
+                <div
+                  className={`${quantityFBStyles['quantityFB__select']} ${quantitySuccessStyles['quantitySS__select']}`}
+                >
+                  <button
+                    className={`${quantityFBStyles['quantityFB__selectBtn']} ${quantitySuccessStyles['quantitySS__selectBtn']}`}
+                    onClick={() => showDropdown(2)}
+                  >
+                    {filter.label}
+                  </button>
+                  {isShow2 ? (
+                    <div className={quantityFBStyles['quantityFB__selectDropdown']}>
+                      <div className={quantityFBStyles['quantityFB__selectItem']} id="" onClick={(e) => setValue(e, 2)}>
+                        Tất cả
+                      </div>
+                      {isSuccessBrand &&
+                        dataBrands.data.data.map((item, index) => (
+                          <div
+                            key={index}
+                            id={item.code}
+                            className={quantityFBStyles['quantityFB__selectItem']}
+                            onClick={(e) => setValue(e, 2)}
+                          >
+                            {item.name}
+                          </div>
+                        ))}
+                    </div>
+                  ) : null}
+                </div>
+              </div>
+              <div style={{ height: '390px', overflow: 'overlay' }}>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>STT</th>
+                      <th>Dịch vụ</th>
+                      <th>Số lượng</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {dataPrice.map((item, index) => (
+                      <tr key={index}>
+                        <td>{index + 1}</td>
+                        <td>{item.group_service}</td>
+                        <td>{formatMoney(item.tong_tien)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div className={`${quantityFBStyles['quantityFB__item']} ${quantityFBStyles['quantityFB__item--1']}`}>
+            <Bar options={options} data={dataBrand} />
+          </div>
+        </div>
       </div>
     </>
   );

@@ -87,21 +87,21 @@ export default function Booking() {
       selector: (row) => row.phone_1,
     },
     {
-      name: 'Tỉnh/Thành phố',
-      selector: (row) => row.city,
-      sortable: true,
-    },
-    {
       name: 'Ngày hẹn lịch',
       selector: (row) => new Date(row.booking_date).toLocaleDateString('en-GB'),
     },
     {
-      name: 'Hiệu lực đến ngày',
+      name: 'Hiệu lực đến',
       selector: (row) => new Date(row.day_expire).toLocaleDateString('en-GB'),
     },
     {
       name: 'Trạng thái hiệu lực',
       selector: (row) => (row.effect === '' ? 'Trống' : row.effect),
+      grow: 0.6,
+    },
+    {
+      name: 'Trạng thái',
+      selector: (row) => (row.stage_id === '' ? 'Trống' : row.stage_id),
     },
     {
       name: 'Nhân viên',
@@ -122,6 +122,7 @@ export default function Booking() {
           Xem thêm
         </button>
       ),
+      right: true,
     },
   ];
 
@@ -129,32 +130,33 @@ export default function Booking() {
     <div className={bookingStyles['booking__main']}>
       <div className={bookingStyles['booking__head']}>
         <div className={bookingStyles['booking__cta']}>
+          <div className={bookingStyles['booking__title']}>Danh Sách {type.label}</div>
           <div className={bookingStyles['booking__ctaLeft']}>
-            <div className={bookingStyles['booking__ctaSearch']}>
-              <Button event={() => toggle('ModalSearchBooking')} icon="magnifying-glass-solid.svg">
-                Tìm kiếm
-              </Button>
-            </div>
             {filterSearch ? (
               <Button event={() => removeFilter()} color="red">
                 Xóa bộ lọc
               </Button>
             ) : null}
-          </div>
-          <div className={bookingStyles['booking__select']}>
-            <button className={bookingStyles['booking__selectBtn']} onClick={showDropdown}>
-              {type.label}
-            </button>
-            {isShow ? (
-              <div className={bookingStyles['booking__selectDropdown']}>
-                <div className={bookingStyles['booking__selectItem']} id="opportunity" onClick={(e) => setValue(e)}>
-                  Booking
+            <div className={bookingStyles['booking__ctaSearch']}>
+              <Button event={() => toggle('ModalSearchBooking')} icon="magnifying-glass-solid.svg">
+                Tìm kiếm
+              </Button>
+            </div>
+            <div className={bookingStyles['booking__select']}>
+              <button className={bookingStyles['booking__selectBtn']} onClick={showDropdown}>
+                {type.label}
+              </button>
+              {isShow ? (
+                <div className={bookingStyles['booking__selectDropdown']}>
+                  <div className={bookingStyles['booking__selectItem']} id="opportunity" onClick={(e) => setValue(e)}>
+                    Booking
+                  </div>
+                  <div className={bookingStyles['booking__selectItem']} id="lead" onClick={(e) => setValue(e)}>
+                    Lead
+                  </div>
                 </div>
-                <div className={bookingStyles['booking__selectItem']} id="lead" onClick={(e) => setValue(e)}>
-                  Lead
-                </div>
-              </div>
-            ) : null}
+              ) : null}
+            </div>
           </div>
         </div>
         {filterSearch ? (

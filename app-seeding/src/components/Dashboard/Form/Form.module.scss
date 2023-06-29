@@ -11,15 +11,23 @@
     border-bottom: 1px solid #e6e6e6;
     padding: 1.5rem 1.25rem 1.25rem;
   }
+  &__title {
+    font-weight: 600;
+    font-size: 20px;
+  }
   &__cta {
     display: flex;
     justify-content: space-between;
     align-items: center;
     &Left {
       display: flex;
+      button {
+        padding: 0.525rem 0.8rem;
+      }
     }
-    &Search {
-      margin-right: 10px;
+    &Search,
+    &Add {
+      margin-left: 10px;
     }
   }
   &__filter {

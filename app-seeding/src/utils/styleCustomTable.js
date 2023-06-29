@@ -15,7 +15,7 @@ export const customStyles = {
     rows: {
         style: {
             minHeight: '50px',
-            fontSize: '15px',
+            fontSize: '14px',
         },
     },
     cells: {

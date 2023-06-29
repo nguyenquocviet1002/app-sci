@@ -17,6 +17,14 @@ export function useGetAllUser(body) {
     return { dataAllUser, isLoadingAllUser, isSuccessAllUser, refetchAllUser }
 }
 
+export function useGetAllUserCode(body) {
+    const { data: dataAllUserCode, isSuccess: isSuccessAllUserCode } = useQuery({
+        queryKey: ['userAll', body.code_user],
+        queryFn: () => getAllUserFn(body),
+    });
+    return { dataAllUserCode, isSuccessAllUserCode }
+}
+
 export function useCreateUser(body) {
     const { data: dataCreateUser, isLoading: isLoadingCreateUser, isSuccess: isSuccessCreateUser, refetch: refetchCreateUser } = useQuery({
         queryKey: ['userCreate'],

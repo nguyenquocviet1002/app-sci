@@ -74,7 +74,7 @@
     margin: 0 5px;
     position: relative;
     &--single {
-      width: 100%;
+      width: calc(100% - 10px);
     }
   }
   &__label {
@@ -95,10 +95,8 @@
   }
   &__link {
     color: #1c64f2;
+    border-color: #1c64f2;
     transition: all 0.3s;
-    &:hover {
-      border-color: #1c64f2;
-    }
   }
   &__selectCompany {
     position: absolute;
@@ -142,13 +140,13 @@
     width: fit-content;
     margin-left: auto;
     margin-right: 0;
+    margin-top: 15px;
   }
   &__infoName {
     display: flex;
     align-items: center;
     font-size: 17px;
     font-weight: 600;
-    border-bottom: 1px solid #ddd;
   }
   &__infoIcon {
     width: 20px;
@@ -158,21 +156,29 @@
       height: auto;
     }
   }
+  &__infoContent {
+    margin-top: 10px;
+  }
   &__infoContentItem {
     display: flex;
     padding: 5px 0;
   }
   &__infoLabel {
-    max-width: 50%;
+    max-width: 40%;
     width: 100%;
     font-weight: 600;
+    &--1 {
+      max-width: 20%;
+    }
   }
   &__infoValue {
     flex: 1;
   }
   &__info--bot {
     display: flex;
-    margin-top: 10px;
+  }
+  &__info--main {
+    padding-top: 1rem;
   }
   &__aside {
     max-width: 50%;

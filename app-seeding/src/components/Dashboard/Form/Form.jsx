@@ -3,10 +3,11 @@ import { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { useModal } from '@/hooks/useModal';
+import { useGetForm } from '@/services/formService';
+import { useGetUser } from '@/services/userService';
+import { removeFormFn } from '@/api/form';
 import { removeFirstItem } from '@/utils/removeFirstItem';
 import { customStyles, paginationComponentOptions } from '@/utils/styleCustomTable';
-import { useGetForm } from '@/services/formService';
-import { removeFormFn } from '@/api/form';
 
 import ModalSearchForm from '../ModalSearchForm';
 import ModalCreateForm from '../ModalCreateForm';
@@ -18,7 +19,6 @@ import Loading from '@/components/UI/Loading';
 import Button from '@/components/UI/Button';
 
 import formStyles from './Form.module.scss';
-import { useGetUser } from '@/services/userService';
 
 export default function Form() {
   const [dataLeadItem, setDataLeadItem] = useState([]);
@@ -152,21 +152,24 @@ export default function Form() {
     <div className={formStyles['form__main']}>
       <div className={formStyles['form__head']}>
         <div className={formStyles['form__cta']}>
+          <div className={formStyles['form__title']}>Danh Sách Form</div>
           <div className={formStyles['form__ctaLeft']}>
-            <div className={formStyles['form__ctaSearch']}>
-              <Button event={() => toggle('ModalSearchForm')} icon="magnifying-glass-solid.svg">
-                Tìm kiếm
-              </Button>
-            </div>
             {filterSearch ? (
               <Button event={() => removeFilter()} color="red">
                 Xóa bộ lọc
               </Button>
             ) : null}
+            <div className={formStyles['form__ctaSearch']}>
+              <Button event={() => toggle('ModalSearchForm')} icon="magnifying-glass-solid.svg">
+                Tìm kiếm
+              </Button>
+            </div>
+            <div className={formStyles['form__ctaAdd']}>
+              <Button event={() => toggle('ModalCreateForm')} icon="plus-solid.svg">
+                Thêm mới
+              </Button>
+            </div>
           </div>
-          <Button event={() => toggle('ModalCreateForm')} icon="plus-solid.svg">
-            Thêm mới
-          </Button>
         </div>
         {filterSearch ? (
           <div className={formStyles['form__filter']}>

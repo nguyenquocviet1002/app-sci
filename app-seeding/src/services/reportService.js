@@ -1,4 +1,4 @@
-import { getBrandFn, getReportFn } from "@/api/report";
+import { getBrandFn, getCheckDataFn, getReportFn } from "@/api/report";
 import { useQuery } from "@tanstack/react-query";
 
 
@@ -16,5 +16,13 @@ export const useGetBrand = (body) => {
         queryFn: () => getBrandFn(body),
     })
     return { dataBrands, isLoadingBrand, isSuccessBrand, refetchBrand, isFetchingBrand }
+}
+
+export const useGetCheckData = (body) => {
+    const { data: dataCheck, isLoading: isLoadingCheck, isSuccess: isSuccessCheck, refetch: refetchCheck, isFetching: isFetchingCheck } = useQuery({
+        queryKey: ['check-data'],
+        queryFn: () => getCheckDataFn(body),
+    })
+    return { dataCheck, isLoadingCheck, isSuccessCheck, refetchCheck, isFetchingCheck }
 }
 

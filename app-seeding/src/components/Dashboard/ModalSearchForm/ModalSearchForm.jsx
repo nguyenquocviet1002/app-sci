@@ -88,7 +88,7 @@ export default function ModalSearchForm({ isShowing, hide, element, token, show,
                       <path d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"></path>
                     </svg>
                   </button>
-                  <h3 className="modal__head">Tìm kiếm</h3>
+                  <h4 className="modal__head">Tìm kiếm</h4>
                   <div className="modal__line"></div>
                   <div className="modal__around">
                     <div className="modal__body">
@@ -195,49 +195,46 @@ export default function ModalSearchForm({ isShowing, hide, element, token, show,
                           </div>
                         )}
                       </div>
-                    </div>
-                  </div>
-                  <div className="modal__line"></div>
-                  <div className="modal__around">
-                    <div className="modal__formControl">
-                      <div className="modal__formGroup">
-                        <label htmlFor="info-date-from" className="modal__label">
-                          Từ
-                        </label>
-                        <input
-                          type="date"
-                          id="info-date-from"
-                          className="modal__input"
-                          value={info.start_date}
-                          onChange={handleChange('start_date')}
-                        />
+                      <div className="modal__formControl" style={{ marginTop: '15px' }}>
+                        <div className="modal__formGroup">
+                          <label htmlFor="info-date-from" className="modal__label">
+                            Từ
+                          </label>
+                          <input
+                            type="date"
+                            id="info-date-from"
+                            className="modal__input"
+                            value={info.start_date}
+                            onChange={handleChange('start_date')}
+                          />
+                        </div>
+                        <div className="modal__formGroup">
+                          <label htmlFor="info-date-to" className="modal__label">
+                            Đến
+                          </label>
+                          <input
+                            type="date"
+                            id="info-date-to"
+                            className="modal__input"
+                            value={info.end_date}
+                            onChange={handleChange('end_date')}
+                          />
+                        </div>
                       </div>
-                      <div className="modal__formGroup">
-                        <label htmlFor="info-date-to" className="modal__label">
-                          Đến
-                        </label>
-                        <input
-                          type="date"
-                          id="info-date-to"
-                          className="modal__input"
-                          value={info.end_date}
-                          onChange={handleChange('end_date')}
-                        />
+                      <div className="modal__submit">
+                        <Button
+                          event={() => {
+                            refetchForm();
+                            show(info);
+                            hide();
+                            setValueCompany('');
+                            setCompanyFilter(company);
+                            setInfo(initialInfo);
+                          }}
+                        >
+                          Tìm kiếm
+                        </Button>
                       </div>
-                    </div>
-                    <div className="modal__submit">
-                      <Button
-                        event={() => {
-                          refetchForm();
-                          show(info);
-                          hide();
-                          setValueCompany('');
-                          setCompanyFilter(company);
-                          setInfo(initialInfo);
-                        }}
-                      >
-                        Tìm kiếm
-                      </Button>
                     </div>
                   </div>
                 </div>

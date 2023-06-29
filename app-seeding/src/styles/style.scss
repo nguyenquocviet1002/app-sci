@@ -1,11 +1,16 @@
 @import 'button';
 @import 'modal';
 
-@import url('https://fonts.googleapis.com/css2?family=Inter&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed&display=swap');
 
 html,
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Roboto Condensed', sans-serif;
   line-height: normal;
   background-color: #f3f0ec;
+}
+
+.container-full {
+  padding-left: 30px;
+  padding-right: 30px;
 }

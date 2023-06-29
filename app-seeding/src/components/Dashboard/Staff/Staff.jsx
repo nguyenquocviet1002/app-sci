@@ -5,14 +5,14 @@ import { removeFirstItem } from '@/utils/removeFirstItem';
 import { useGetAllUser, useUpdateActiveUser } from '@/services/userService';
 import { formatMoney } from '@/utils/formatMoney';
 import { customStyles } from '@/utils/styleCustomTable';
-
-import ModalCreateUser from '../ModalCreateUser';
 import { useModal } from '@/hooks/useModal';
+
+import Button from '@/components/UI/Button';
+import ModalCreateUser from '../ModalCreateUser';
 import ModalChangePasswordUser from '../ModalChangePasswordUser';
 import ModalTarget from '../ModalTarget';
 
 import staffStyles from './Staff.module.scss';
-import Button from '@/components/UI/Button';
 
 export default function Staff() {
   // eslint-disable-next-line no-unused-vars

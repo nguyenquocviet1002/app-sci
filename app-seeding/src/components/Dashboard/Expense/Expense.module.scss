@@ -1,29 +1,23 @@
-.quantity {
-  &__screen {
-    background-color: #fff;
-    padding: 15px;
+.expense {
+  &__container {
+    padding: 20px;
+  }
+  &__chart {
+    flex: 0 0 auto;
+    max-width: 100%;
+    padding: 0 10px;
+    width: 30%;
+  }
+  &__table {
+    flex: 0 0 auto;
+    max-width: 100%;
+    padding: 0 10px;
+    width: 70%;
   }
   &__title {
-    text-transform: uppercase;
+    border-bottom: 1px solid #e6e6e6;
+    padding: 20px;
     font-weight: 600;
     font-size: 18px;
-    margin-top: 20px;
-  }
-}
-.menuLead {
-  display: flex;
-  justify-content: left;
-  align-items: center;
-  gap: 20px;
-  margin: 15px 0;
-
-  &__tabs {
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-  }
-
-  & .active {
-    border-bottom: 1px solid #000;
   }
 }

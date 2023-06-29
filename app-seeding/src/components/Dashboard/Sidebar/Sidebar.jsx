@@ -21,14 +21,14 @@ export default function Sidebar({ isShow }) {
         {isSuccessUser && dataUser.data.data.rule === 'admin'
           ? MENU_ADMIN.map((item, index) => (
               <li key={index} className={sidebarStyles['sidebar__navItem']}>
-                <NavLink to={item.link} className={({ isActive }) => (isActive ? ` ${sidebarStyles['active']}` : null)}>
+                <NavLink to={item.link} className={({ isActive }) => (isActive ? sidebarStyles['active'] : '')}>
                   {item.title}
                 </NavLink>
               </li>
             ))
           : MENU_USER.map((item, index) => (
               <li key={index} className={sidebarStyles['sidebar__navItem']}>
-                <NavLink to={item.link} className={({ isActive }) => (isActive ? ` ${sidebarStyles['active']}` : null)}>
+                <NavLink to={item.link} className={({ isActive }) => (isActive ? sidebarStyles['active'] : '')}>
                   {item.title}
                 </NavLink>
               </li>

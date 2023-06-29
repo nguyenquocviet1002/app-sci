@@ -8,11 +8,15 @@ export const MENU_ADMIN = [
         title: 'Lead/Booking'
     },
     {
-        link: 'quantity',
-        title: 'Báo cáo số lượng'
+        link: 'quantity-fb/week',
+        title: 'Báo cáo số lượng form/booking'
     },
     {
-        link: 'expense',
+        link: 'quantity-success/week',
+        title: 'Báo cáo số lượng khách hàng thành công'
+    },
+    {
+        link: 'expense/week',
         title: "Báo cáo chi phí"
     },
     {
@@ -35,11 +39,15 @@ export const MENU_USER = [
         title: 'Lead/Booking'
     },
     {
-        link: 'quantity',
-        title: 'Báo cáo số lượng'
+        link: 'quantity-fb/week',
+        title: 'Báo cáo số lượng form/booking'
     },
     {
-        link: 'expense',
+        link: 'quantity-success/week',
+        title: 'Báo cáo số lượng khách hàng thành công'
+    },
+    {
+        link: 'expense/week',
         title: "Báo cáo chi phí"
     },
     {
