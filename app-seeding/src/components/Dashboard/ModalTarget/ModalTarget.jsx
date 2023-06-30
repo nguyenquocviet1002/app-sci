@@ -6,6 +6,7 @@ import { formatMoney } from '@/utils/formatMoney';
 import { useQuery } from '@tanstack/react-query';
 import { createTargetFn, updateTargetFn } from '@/api/targetApi';
 import { useGetAllUser } from '@/services/userService';
+import Button from '@/components/UI/Button';
 
 export default function ModalTarget({ isShowing, hide, element, token, infoTarget }) {
   const initialInfoTarget = useMemo(() => {
@@ -100,8 +101,9 @@ export default function ModalTarget({ isShowing, hide, element, token, infoTarge
                     <path d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"></path>
                   </svg>
                 </button>
+                <h4 className="modal__head">{infoTarget.name}</h4>
+                <div className="modal__line"></div>
                 <div className="modal__around">
-                  <h3 className="modal__head">{infoTarget.name}</h3>
                   <div className="modal__body">
                     {isSuccessTarget &&
                       dataTargetNew.map((item, index) => (
@@ -118,7 +120,7 @@ export default function ModalTarget({ isShowing, hide, element, token, infoTarge
                           )}
 
                           {isInput && item.id === infoValueTarget.id ? (
-                            <div style={{ display: 'flex' }}>
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
                               <div
                                 className="modal__targetSave"
                                 onClick={() => {
@@ -140,12 +142,13 @@ export default function ModalTarget({ isShowing, hide, element, token, infoTarge
                           ) : (
                             <div
                               className="modal__targetUpdate"
-                              style={{ backgroundImage: `url(${process.env.PUBLIC_URL}/images/icon-pen.png)` }}
                               onClick={() => {
                                 setIsInput(true);
                                 setInfoValueTarget({ ...infoValueTarget, id: item.id, kpi_date: item.date });
                               }}
-                            ></div>
+                            >
+                              <img src={`${process.env.PUBLIC_URL}/images/pencil-solid.svg`} alt="" />
+                            </div>
                           )}
                         </div>
                       ))}
@@ -169,26 +172,28 @@ export default function ModalTarget({ isShowing, hide, element, token, infoTarge
                       </div>
                     )}
                     {isAdd ? (
-                      <button
-                        type="button"
-                        className="modal__submit"
-                        onClick={() => {
-                          setIsAdd(false);
-                          handleSubmitAdd();
-                        }}
-                      >
-                        Save
-                      </button>
+                      <div className="modal__submit" style={{ display: 'flex', gap: '5px' }}>
+                        <Button
+                          event={() => {
+                            setIsAdd(false);
+                            handleSubmitAdd();
+                          }}
+                        >
+                          Lưu
+                        </Button>
+                        <Button
+                          event={() => {
+                            setIsAdd(false);
+                          }}
+                          color="red"
+                        >
+                          Hủy
+                        </Button>
+                      </div>
                     ) : (
-                      <button
-                        type="button"
-                        className="modal__submit"
-                        onClick={() => {
-                          setIsAdd(true);
-                        }}
-                      >
-                        Thêm mới
-                      </button>
+                      <div className="modal__submit">
+                        <Button event={() => setIsAdd(true)}>Thêm mới</Button>
+                      </div>
                     )}
                   </div>
                 </div>

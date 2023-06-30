@@ -2,7 +2,7 @@ import ReactDOM from 'react-dom';
 
 import modalConfirmStyles from './ModalConfirm.module.scss';
 
-export default function ModalConfirm({ isShowing, hide, element, onSubmit }) {
+export default function ModalConfirm({ isShowing, hide, element, onSubmit, children }) {
   return isShowing && element === 'ModalConfirm'
     ? ReactDOM.createPortal(
         <>
@@ -34,7 +34,7 @@ export default function ModalConfirm({ isShowing, hide, element, onSubmit }) {
                       d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                     ></path>
                   </svg>
-                  <h3 className={modalConfirmStyles['modalConfirm__text']}>Bạn có muốn thực hiện hành động</h3>
+                  <h3 className={modalConfirmStyles['modalConfirm__text']}>{children}</h3>
                   <button
                     type="button"
                     className={modalConfirmStyles['modalConfirm__yes']}

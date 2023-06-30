@@ -10,11 +10,11 @@ export function useGetUser(token) {
 }
 
 export function useGetAllUser(body) {
-    const { data: dataAllUser, isLoading: isLoadingAllUser, isSuccess: isSuccessAllUser, refetch: refetchAllUser } = useQuery({
+    const { data: dataAllUser, isLoading: isLoadingAllUser, isSuccess: isSuccessAllUser, isFetching: isFetchingAllUser, refetch: refetchAllUser } = useQuery({
         queryKey: ['userAll'],
         queryFn: () => getAllUserFn(body),
     });
-    return { dataAllUser, isLoadingAllUser, isSuccessAllUser, refetchAllUser }
+    return { dataAllUser, isLoadingAllUser, isSuccessAllUser, isFetchingAllUser, refetchAllUser }
 }
 
 export function useGetAllUserCode(body) {

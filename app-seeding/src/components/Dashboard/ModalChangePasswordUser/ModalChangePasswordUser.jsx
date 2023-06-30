@@ -1,6 +1,7 @@
 import ReactDOM from 'react-dom';
 import { useState } from 'react';
 import { useUpdatePasswordUser } from '@/services/userService';
+import Button from '@/components/UI/Button';
 
 export default function ModalChangePasswordUser({ isShowing, hide, element, token, phoneLogin }) {
   const initialInfo = {
@@ -41,8 +42,9 @@ export default function ModalChangePasswordUser({ isShowing, hide, element, toke
                     <path d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"></path>
                   </svg>
                 </button>
+                <h4 className="modal__head">Đổi mật khẩu</h4>
+                <div className="modal__line"></div>
                 <div className="modal__around">
-                  <h3 className="modal__head">Sửa thông tin</h3>
                   <div className="modal__body">
                     <div>
                       <label htmlFor="password" className="modal__label">
@@ -66,9 +68,15 @@ export default function ModalChangePasswordUser({ isShowing, hide, element, toke
                         onChange={handleChange('confirmPassword')}
                       />
                     </div>
-                    <button type="button" className="modal__submit" onClick={handleSubmit}>
-                      Cập nhật
-                    </button>
+                    <div className="modal__submit">
+                      <Button
+                        event={() => {
+                          handleSubmit();
+                        }}
+                      >
+                        Cập nhật
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </div>

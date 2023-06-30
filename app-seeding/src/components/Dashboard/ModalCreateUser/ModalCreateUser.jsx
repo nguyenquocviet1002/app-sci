@@ -3,6 +3,8 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { createUserFn } from '@/api/userApi';
 
+import Button from '@/components/UI/Button';
+
 export default function ModalCreateUser({ isShowing, hide, element, token, refetch }) {
   const initialInfo = {
     token: token,
@@ -42,8 +44,8 @@ export default function ModalCreateUser({ isShowing, hide, element, token, refet
                     <path d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"></path>
                   </svg>
                 </button>
+                <h3 className="modal__head">Thêm mới</h3>
                 <div className="modal__around">
-                  <h3 className="modal__head">Thêm mới</h3>
                   <div className="modal__body">
                     <div>
                       <label htmlFor="name" className="modal__label">
@@ -74,9 +76,15 @@ export default function ModalCreateUser({ isShowing, hide, element, token, refet
                         onChange={handleChange('date_of_birth')}
                       />
                     </div>
-                    <button type="button" className="modal__submit" onClick={handleSubmit}>
-                      Thêm mới
-                    </button>
+                    <div className="modal__submit">
+                      <Button
+                        event={() => {
+                          handleSubmit();
+                        }}
+                      >
+                        Thêm mới
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </div>
