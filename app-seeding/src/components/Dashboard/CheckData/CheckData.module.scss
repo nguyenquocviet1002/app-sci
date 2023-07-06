@@ -63,6 +63,21 @@
   &__table {
     padding: 1.125rem;
   }
+  &__read {
+    color: #452b90;
+    border-radius: 0.375rem;
+    font-weight: 500;
+    border: 1px solid #452b90;
+    padding: 0.438rem 1rem;
+    background-color: transparent;
+    transition: all 0.15s ease-in-out;
+    cursor: pointer;
+    &:hover {
+      color: #fff;
+      border-color: #321f69;
+      background-color: #321f69;
+    }
+  }
   @media (max-width: 768px) {
     &__cta {
       flex-direction: column;

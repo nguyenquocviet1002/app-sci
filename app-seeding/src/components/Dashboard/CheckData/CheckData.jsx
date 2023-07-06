@@ -1,20 +1,23 @@
+import DataTable from 'react-data-table-component';
 import { useMemo, useState } from 'react';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { useGetCheckData } from '@/services/reportService';
+import { customStyles, paginationComponentOptions } from '@/utils/styleCustomTable';
+import { formatDate } from '@/utils/formatDate';
+import { useModal } from '@/hooks/useModal';
 
 import Loading from '@/components/UI/Loading';
 
 import checkDataStyles from './CheckData.module.scss';
-import { formatDate } from '@/utils/formatDate';
-import DataTable from 'react-data-table-component';
-import { customStyles, paginationComponentOptions } from '@/utils/styleCustomTable';
+import ModalCheckData from '../ModalCheckData';
 
 export default function CheckData() {
   // eslint-disable-next-line no-unused-vars
   const [token, setToken] = useLocalStorage('token', null);
   const [inputDate, setInputDate] = useState('');
   const [valueSearch, setValueSearch] = useState('');
-
+  const [dataModal, setDataModal] = useState({ type: '', data: [] });
+  const { isShowing, cpn, toggle } = useModal();
   const initialCheck = useMemo(() => {
     return {
       token: token,
@@ -46,11 +49,37 @@ export default function CheckData() {
     },
     {
       name: 'Doanh số',
-      selector: (row) => row.doanh_so,
+      selector: (row) =>
+        row.doanh_so.length > 0 ? (
+          <button
+            className={checkDataStyles['check__read']}
+            onClick={() => {
+              setDataModal({ type: 'doanh_so', data: row.doanh_so });
+              toggle('ModalCheckData');
+            }}
+          >
+            Xem thêm
+          </button>
+        ) : (
+          'Trống'
+        ),
     },
     {
       name: 'Dịch vụ',
-      selector: (row) => row.dich_vu.join('<br/> '),
+      selector: (row) =>
+        row.dich_vu.length > 0 ? (
+          <button
+            className={checkDataStyles['check__read']}
+            onClick={() => {
+              setDataModal({ type: 'dich_vu', data: row.dich_vu });
+              toggle('ModalCheckData');
+            }}
+          >
+            Xem thêm
+          </button>
+        ) : (
+          'Trống'
+        ),
     },
   ];
 
@@ -96,6 +125,7 @@ export default function CheckData() {
           </div>
         )}
       </div>
+      <ModalCheckData isShowing={isShowing} hide={toggle} element={cpn} data={dataModal} />
     </>
   );
 }
