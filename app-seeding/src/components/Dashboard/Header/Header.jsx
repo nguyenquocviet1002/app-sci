@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useModal } from '@/hooks/useModal';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
@@ -8,7 +8,7 @@ import ModalChangePassword from '../ModalChangePassword';
 
 import headerStyles from './Header.module.scss';
 
-export default function Header({ event, isShow }) {
+export default function Header() {
   const [isToggle, setIsToggle] = useState(false);
   const { isShowing, cpn, toggle } = useModal();
 
@@ -27,21 +27,12 @@ export default function Header({ event, isShow }) {
     setIsToggle(!isToggle);
   };
 
-  const ref = useRef(null);
-
   return (
     <>
-      <header className={`${headerStyles['header']} ${isShow ? headerStyles['toggle'] : ''}`}>
+      <header className={`${headerStyles['header']}`}>
         <div className="container-full" style={{ height: '100%' }}>
           <div className={headerStyles['header__content']}>
-            <div className={headerStyles['header__left']}>
-              <button ref={ref} className={headerStyles['header__menu']} onClick={event}>
-                <img
-                  src={`${process.env.PUBLIC_URL}/images/${!isShow ? 'bars-solid.svg' : 'xmark-solid.svg'}`}
-                  alt=""
-                />
-              </button>
-            </div>
+            <div className={headerStyles['header__left']}></div>
             <div className={headerStyles['header__right']}>
               <div className={headerStyles['header__cta']}>
                 <button

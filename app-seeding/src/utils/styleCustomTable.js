@@ -1,7 +1,7 @@
 export const customStyles = {
     headRow: {
         style: {
-            borderBottom: '2px solid rgba(0, 0, 0, 0.12)'
+            borderBottom: '2px solid rgba(0, 0, 0, 0.12)',
         },
     },
     headCells: {

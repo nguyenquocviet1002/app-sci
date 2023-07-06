@@ -19,6 +19,7 @@ import { getCustomerSuccess, getSuccessBrandYear, getSuccessByBrand } from '@/ut
 
 import quantityFBStyles from '../QuantityFB/QuantityFB.module.scss';
 import quantitySuccessStyles from './QuantitySuccess.module.scss';
+import Loading from '@/components/UI/Loading';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 const options = {
@@ -47,6 +48,7 @@ export default function QuantitySuccess() {
   });
   const [searchValue, setSearchValue] = useState('');
   const [filter, setFilter] = useState({ label: 'Thương hiệu', value: '' });
+  const [isLoading, setIsLoading] = useState(true);
 
   // eslint-disable-next-line no-unused-vars
   const [token, setToken] = useLocalStorage('token', null);
@@ -101,14 +103,21 @@ export default function QuantitySuccess() {
       const last = first + 6;
       const firstDay = new Date(curr.setDate(first));
       const lastDay = new Date(curr.setDate(last));
-      getSuccessByBrand(firstDay, lastDay, token, user.value)
-        .then((data) => setDataSuccessBrand(data))
-        .catch((err) => console.log(err));
-      getCustomerSuccess(searchValue, filter.value, firstDay, lastDay, token, user.value)
-        .then((data) => setDataSuccessService(data.so_luong))
-        .catch((err) => console.log(err));
+      if (dataUser) {
+        getSuccessByBrand(firstDay, lastDay, token, user.value)
+          .then((data) =>
+            setDataSuccessBrand({
+              ...data,
+              labels: ['Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7', 'Chủ nhật'],
+            }),
+          )
+          .catch((err) => console.log(err));
+        getCustomerSuccess(searchValue, filter.value, firstDay, lastDay, token, user.value)
+          .then((data) => setDataSuccessService(data.so_luong))
+          .catch((err) => console.log(err));
+      }
     }
-  }, [matchSuccessMonth, matchSuccessAbout, matchSuccessYear, token, user, searchValue, filter, inputDate]);
+  }, [matchSuccessMonth, matchSuccessAbout, matchSuccessYear, token, user, searchValue, filter, inputDate, dataUser]);
 
   const showDropdown = (id) => {
     if (id === 1) {
@@ -136,6 +145,12 @@ export default function QuantitySuccess() {
       .then((data) => setDataSuccessService(data.so_luong))
       .catch((err) => console.log(err));
   };
+
+  useEffect(() => {
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
+  }, []);
 
   const data = {
     labels: dataSuccessBrand.labels,
@@ -179,6 +194,7 @@ export default function QuantitySuccess() {
 
   return (
     <>
+      {isLoading && <Loading />}
       <div className={quantityFBStyles['quantityFB__head']}>
         <div className={quantityFBStyles['quantityFB__filter']}>
           <div className={quantityFBStyles['quantityFB__title']}>Số Lượng Khách Hàng Thành Công</div>
@@ -286,7 +302,7 @@ export default function QuantitySuccess() {
         <div className={quantityFBStyles['quantityFB__table']}>
           <div className={quantityFBStyles['quantityFB__item']}>
             <div className={quantitySuccessStyles['quantitySS__filter']}>
-              <div style={{ position: 'relative' }}>
+              <div style={{ position: 'relative', flex: '1' }}>
                 <input
                   type="text"
                   className={quantitySuccessStyles['quantitySS__filterSearch']}
@@ -332,7 +348,7 @@ export default function QuantitySuccess() {
                 ) : null}
               </div>
             </div>
-            <div style={{ height: '450px', overflow: 'overlay' }}>
+            <div className={quantitySuccessStyles['quantitySS__table']}>
               <table>
                 <thead>
                   <tr>

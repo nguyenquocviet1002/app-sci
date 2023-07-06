@@ -7,6 +7,7 @@ import { useGetAllUser, useGetUser } from '@/services/userService';
 import { removeFirstItem } from '@/utils/removeFirstItem';
 import { getNumberBrand, getNumberByDate, getNumberByYear } from '@/utils/reportNumber';
 
+import Loading from '@/components/UI/Loading';
 import quantityFBStyles from './QuantityFB.module.scss';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
@@ -33,6 +34,7 @@ export default function QuantityFB() {
     startDate: '',
     endDate: '',
   });
+  const [isLoading, setIsLoading] = useState(true);
 
   // eslint-disable-next-line no-unused-vars
   const [token, setToken] = useLocalStorage('token', null);
@@ -118,6 +120,12 @@ export default function QuantityFB() {
       .catch((err) => console.log(err));
   };
 
+  useEffect(() => {
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
+  }, []);
+
   const data = {
     labels: dataQuantity.labels,
     datasets: [
@@ -136,6 +144,7 @@ export default function QuantityFB() {
 
   return (
     <>
+      {isLoading && <Loading />}
       <div className={quantityFBStyles['quantityFB__head']}>
         <div className={quantityFBStyles['quantityFB__filter']}>
           <div className={quantityFBStyles['quantityFB__title']}>Số Lượng Form/Booking</div>

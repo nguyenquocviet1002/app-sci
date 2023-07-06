@@ -1,5 +1,5 @@
 import ReactDOM from 'react-dom';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useGetCompany } from '@/services/formService';
 import { createFormFn } from '@/api/form';
@@ -76,6 +76,20 @@ export default function ModalCreateForm({ isShowing, hide, element, token, refet
     }
   };
 
+  const ref = useRef(null);
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (ref.current && !ref.current.contains(event.target)) {
+        hide();
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [ref, hide]);
+
   return (
     <>
       {queryCreateForm.isFetching && <Loading />}
@@ -83,7 +97,7 @@ export default function ModalCreateForm({ isShowing, hide, element, token, refet
         ? ReactDOM.createPortal(
             <>
               <div className="modal">
-                <div className="modal__box modal__box--search">
+                <div className="modal__box modal__box--search" ref={ref}>
                   <div className="modal__content">
                     <button
                       type="button"

@@ -133,9 +133,11 @@ export default function Booking() {
           <div className={bookingStyles['booking__title']}>Danh Sách {type.label}</div>
           <div className={bookingStyles['booking__ctaLeft']}>
             {filterSearch ? (
-              <Button event={() => removeFilter()} color="red">
-                Xóa bộ lọc
-              </Button>
+              <div className={bookingStyles['booking__removeFilter']}>
+                <Button event={() => removeFilter()} color="red">
+                  Xóa bộ lọc
+                </Button>
+              </div>
             ) : null}
             <div className={bookingStyles['booking__ctaSearch']}>
               <Button event={() => toggle('ModalSearchBooking')} icon="magnifying-glass-solid.svg">

@@ -9,6 +9,7 @@
   border: 1px solid #e5e7eb;
   border-radius: 0.5rem;
   overflow: hidden;
+  box-shadow: 0 0 5px 0 #ccc;
 
   &__box {
     display: flex;
@@ -18,13 +19,22 @@
 
   &__left {
     width: 45%;
-    padding: 60px;
+    padding: 90px 60px;
     color: #111827;
     background-color: #fff;
   }
 
   &__right {
     width: 55%;
+    background-color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    img {
+      width: 50%;
+      height: auto;
+      display: block;
+    }
   }
 
   &__title {
@@ -97,7 +107,7 @@
   @media (max-width: 1440px) {
     &__left {
       width: 50%;
-      padding: 35px 45px;
+      padding: 50px 45px;
     }
 
     &__right {
@@ -148,6 +158,11 @@
 .button--signin {
   width: 100%;
   margin: 0;
+  background-color: #0d6efd;
+  border-radius: 0.5rem;
+  color: #fff;
+  font-weight: 500;
+  padding: 0.625rem 1.25rem;
 }
 
 .error {

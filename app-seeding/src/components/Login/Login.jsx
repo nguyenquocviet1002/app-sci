@@ -30,6 +30,8 @@ export default function Login() {
     onSuccess: (data) => {
       if (data.data.message) {
         setValidate({ status: true, message: 'Số điện thoại hoặc mật khẩu không đúng' });
+      } else if (data.data.active === false) {
+        setValidate({ status: true, message: 'Tài khoản đã bị vô hiệu hóa' });
       } else {
         setToken(data.data.access_token);
         navigate('/dashboard/form');
@@ -60,6 +62,7 @@ export default function Login() {
               value={infoUser.user}
               onChange={handleChange('user')}
               onFocus={() => setValidate({ status: false, message: '' })}
+              onKeyDown={(e) => (e.key === 'Enter' ? handleSubmit() : '')}
             />
           </div>
           <div className={loginStyles['signin__group']}>
@@ -71,6 +74,7 @@ export default function Login() {
               value={infoUser.password}
               onChange={handleChange('password')}
               onFocus={() => setValidate({ status: false, message: '' })}
+              onKeyDown={(e) => (e.key === 'Enter' ? handleSubmit() : '')}
             />
           </div>
 
@@ -79,7 +83,7 @@ export default function Login() {
           </button>
         </div>
         <div className={loginStyles['signin__right']}>
-          <img className={loginStyles['signin__img']} src={`${process.env.PUBLIC_URL}/images/image.jpg`} alt="" />
+          <img className={loginStyles['signin__img']} src={`${process.env.PUBLIC_URL}/images/logo.svg`} alt="" />
         </div>
       </div>
     </div>

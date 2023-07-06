@@ -9,6 +9,7 @@ import { removeFirstItem } from '@/utils/removeFirstItem';
 import { getCustomerSuccess, getRevenue, getRevenueByYear } from '@/utils/reportNumber';
 import { formatMoney } from '@/utils/formatMoney';
 
+import Loading from '@/components/UI/Loading';
 import quantityFBStyles from '../QuantityFB/QuantityFB.module.scss';
 import quantitySuccessStyles from '../QuantitySuccess/QuantitySuccess.module.scss';
 import expenseStyles from './Expense.module.scss';
@@ -25,6 +26,7 @@ const options = {
 
 export default function Expense() {
   const [dataTarget, setDataTarget] = useState([]);
+  const [dataPercent, setDataPercent] = useState([]);
   const [dataPrice, setDataPrice] = useState([]);
   const [dataPriceBrand, setDataPriceBrand] = useState([]);
   const [user, setUser] = useState({ label: 'Nhân viên', value: '' });
@@ -36,6 +38,7 @@ export default function Expense() {
   });
   const [searchValue, setSearchValue] = useState('');
   const [filter, setFilter] = useState({ label: 'Thương hiệu', value: '' });
+  const [isLoading, setIsLoading] = useState(true);
 
   // eslint-disable-next-line no-unused-vars
   const [token, setToken] = useLocalStorage('token', null);
@@ -44,31 +47,35 @@ export default function Expense() {
   const { dataBrands, isSuccessBrand } = useGetBrand(token);
 
   useEffect(() => {
-    if (isSuccessUser && dataUser.data.data.rule === 'user') {
-      setUser({ label: dataUser.data.data.username, value: dataUser.data.data.code_seeding });
+    if (isSuccessUser) {
+      if (dataUser.data.data.rule === 'user') {
+        setUser({ label: dataUser.data.data.username, value: dataUser.data.data.code_seeding });
+      }
     }
   }, [isSuccessUser, dataUser]);
 
   useEffect(() => {
     if (isSuccessUser && isSuccessAllUser) {
       const dataUserTarget = removeFirstItem(dataAllUser).filter((item) => {
-        return item.code_user === user.value;
+        return item.code_user === (user.value === '' ? 'US0000015' : user.value);
       });
 
       if (dataUserTarget.length !== 0) {
-        const targetSet = [dataUserTarget[0].kpi_now, dataUserTarget[0].kpi_target - dataUserTarget[0].kpi_now];
+        const targetSet = [
+          dataUserTarget[0].kpi_now,
+          dataUserTarget[0].kpi_target - dataUserTarget[0].kpi_now < 0
+            ? 0
+            : dataUserTarget[0].kpi_target - dataUserTarget[0].kpi_now,
+        ];
+        const kpiTarget = dataUserTarget[0].kpi_target === 0 ? dataUserTarget[0].kpi_now : dataUserTarget[0].kpi_target;
+        const percentSet = ((dataUserTarget[0].kpi_now / kpiTarget) * 100).toFixed();
         setDataTarget(targetSet);
+        setDataPercent(percentSet);
       } else {
         setDataTarget([1, 0]);
       }
     }
   }, [isSuccessUser, isSuccessAllUser, dataUser, dataAllUser, user]);
-
-  useEffect(() => {
-    if (isSuccessUser && dataUser.data.data.rule === 'user') {
-      setUser({ label: dataUser.data.data.username, value: dataUser.data.data.code_seeding });
-    }
-  }, [isSuccessUser, dataUser]);
 
   const matchExMonth = useMatch('/dashboard/expense/month');
   const matchExYear = useMatch('/dashboard/expense/year');
@@ -106,19 +113,23 @@ export default function Expense() {
         .then((data) => setDataPriceBrand(data))
         .catch((err) => console.log(err));
     } else {
-      const curr = new Date(); // get current date
-      const first = curr.getDate() - curr.getDay() + 1; // First day is the day of the month - the day of the week
-      const last = first + 6; // last day is the first day + 6
+      const curr = new Date();
+      const first = curr.getDate() - curr.getDay() + 1;
+      const last = first + 6;
       const firstDay = new Date(curr.setDate(first));
       const lastDay = new Date(curr.setDate(last));
-      getCustomerSuccess(searchValue, filter.value, firstDay, lastDay, token, user.value)
-        .then((data) => setDataPrice(data.tong_tien))
-        .catch((err) => console.log(err));
-      getRevenue(firstDay, lastDay, token, user.value)
-        .then((data) => setDataPriceBrand(data))
-        .catch((err) => console.log(err));
+      if (dataUser) {
+        getCustomerSuccess(searchValue, filter.value, firstDay, lastDay, token, user.value)
+          .then((data) => setDataPrice(data.tong_tien))
+          .catch((err) => console.log(err));
+        getRevenue(firstDay, lastDay, token, user.value)
+          .then((data) =>
+            setDataPriceBrand({ ...data, labels: ['Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7', 'Chủ nhật'] }),
+          )
+          .catch((err) => console.log(err));
+      }
     }
-  }, [matchExMonth, matchExAbout, matchExYear, token, user, searchValue, filter, inputDate]);
+  }, [matchExMonth, matchExAbout, matchExYear, token, user, searchValue, filter, inputDate, dataUser]);
 
   const showDropdown = (id) => {
     if (id === 1) {
@@ -146,6 +157,12 @@ export default function Expense() {
       .then((data) => setDataPriceBrand(data))
       .catch((err) => console.log(err));
   };
+
+  useEffect(() => {
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
+  }, []);
 
   const dataTargetDoughnut = {
     labels: ['Doanh số đã đạt', 'Doanh số chưa đạt'],
@@ -193,6 +210,7 @@ export default function Expense() {
 
   return (
     <>
+      {isLoading && <Loading />}
       <div className={quantityFBStyles['quantityFB__head']}>
         <div className={quantityFBStyles['quantityFB__filter']}>
           <div className={quantityFBStyles['quantityFB__title']}>Báo Cáo Chi Phí</div>
@@ -297,7 +315,20 @@ export default function Expense() {
             <div className={quantityFBStyles['quantityFB__item']}>
               <div className={expenseStyles['expense__title']}>Mục Tiêu</div>
               <div className={expenseStyles['expense__container']}>
-                <Doughnut options={options} data={dataTargetDoughnut} />
+                <Doughnut
+                  options={{
+                    responsive: true,
+                    plugins: {
+                      legend: {
+                        display: false,
+                      },
+                    },
+                  }}
+                  data={dataTargetDoughnut}
+                />
+                <div className={expenseStyles['expense__percent']}>
+                  {dataPercent === 'NaN' ? '0%' : `${dataPercent}%`}
+                </div>
               </div>
             </div>
           </div>
@@ -305,7 +336,7 @@ export default function Expense() {
             <div className={quantityFBStyles['quantityFB__item']}>
               <div className={expenseStyles['expense__title']}>Doanh Thu Theo Dịch Vụ</div>
               <div className={quantitySuccessStyles['quantitySS__filter']}>
-                <div style={{ position: 'relative' }}>
+                <div style={{ position: 'relative', flex: 'auto' }}>
                   <input
                     type="text"
                     className={quantitySuccessStyles['quantitySS__filterSearch']}
@@ -356,7 +387,7 @@ export default function Expense() {
                   ) : null}
                 </div>
               </div>
-              <div style={{ height: '390px', overflow: 'overlay' }}>
+              <div className={expenseStyles['expense__tableBox']}>
                 <table>
                   <thead>
                     <tr>
@@ -380,8 +411,11 @@ export default function Expense() {
           </div>
         </div>
         <div>
-          <div className={`${quantityFBStyles['quantityFB__item']} ${quantityFBStyles['quantityFB__item--1']}`}>
-            <Bar options={options} data={dataBrand} />
+          <div className={`${quantityFBStyles['quantityFB__item']}`}>
+            <div className={expenseStyles['expense__title']}>Doanh Thu Theo Thương Hiệu</div>
+            <div className={quantityFBStyles['quantityFB__item--1']}>
+              <Bar options={options} data={dataBrand} />
+            </div>
           </div>
         </div>
       </div>

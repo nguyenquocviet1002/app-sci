@@ -1,7 +1,8 @@
 import ReactDOM from 'react-dom';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { updatePasswordFn } from '@/api/auth';
+
 import Button from '@/components/UI/Button';
 
 export default function ModalChangePassword({ isShowing, hide, element }) {
@@ -40,11 +41,25 @@ export default function ModalChangePassword({ isShowing, hide, element }) {
     }
   };
 
+  const ref = useRef(null);
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (ref.current && !ref.current.contains(event.target)) {
+        hide();
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [ref, hide]);
+
   return isShowing && element === 'ModalChangePassword'
     ? ReactDOM.createPortal(
         <>
           <div className="modal">
-            <div className="modal__box">
+            <div className="modal__box" ref={ref}>
               <div className="modal__content">
                 <button type="button" className="modal__close" onClick={hide}>
                   <svg aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
@@ -82,7 +97,9 @@ export default function ModalChangePassword({ isShowing, hide, element }) {
                         onFocus={() => setValidate({ status: false, message: '' })}
                       />
                     </div>
-                    <Button event={() => handleUpdate()}>Đổi mật khẩu</Button>
+                    <div className="modal__submit">
+                      <Button event={() => handleUpdate()}>Đổi mật khẩu</Button>
+                    </div>
                   </div>
                 </div>
               </div>

@@ -1,12 +1,27 @@
+import { useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
 
 export default function ModalMoreForm({ isShowing, hide, element, data }) {
+  const ref = useRef(null);
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (ref.current && !ref.current.contains(event.target)) {
+        hide();
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [ref, hide]);
+
   return isShowing && element === 'ModalMoreForm'
     ? ReactDOM.createPortal(
         <>
           <div>
             <div className="modal">
-              <div className="modal__box modal__box--search">
+              <div className="modal__box modal__box--search" ref={ref}>
                 <div className="modal__content">
                   <button type="button" className="modal__close" onClick={hide}>
                     <svg aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">

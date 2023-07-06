@@ -1,5 +1,5 @@
 import ReactDOM from 'react-dom';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useGetCompany, useGetForm } from '@/services/formService';
 
 import Button from '@/components/UI/Button';
@@ -68,12 +68,26 @@ export default function ModalSearchForm({ isShowing, hide, element, token, show,
     }
   };
 
+  const ref = useRef(null);
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (ref.current && !ref.current.contains(event.target)) {
+        hide();
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [ref, hide]);
+
   return isShowing && element === 'ModalSearchForm'
     ? ReactDOM.createPortal(
         <>
           <div>
             <div className="modal">
-              <div className="modal__box modal__box--search">
+              <div className="modal__box modal__box--search" ref={ref}>
                 <div className="modal__content">
                   <button
                     type="button"

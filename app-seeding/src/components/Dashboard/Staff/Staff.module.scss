@@ -17,6 +17,8 @@
     align-items: center;
     &Left {
       display: flex;
+      flex-wrap: wrap;
+      grid-row-gap: 5px;
     }
     &Add {
       margin-left: 10px;
@@ -27,7 +29,7 @@
   }
   &__title {
     font-weight: 600;
-    font-size: 20px;
+    font-size: 18px;
   }
   &__search {
     display: flex;
@@ -126,6 +128,15 @@
         border-color: #ff7676;
         background-color: #ff7676;
       }
+    }
+  }
+  @media (max-width: 768px) {
+    &__cta {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    &__title {
+      margin-bottom: 5px;
     }
   }
 }

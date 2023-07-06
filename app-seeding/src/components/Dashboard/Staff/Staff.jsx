@@ -108,6 +108,10 @@ export default function Staff() {
               toggle('ModalChangePasswordUser');
               setPhoneLogin(row.phone);
             }}
+            style={{
+              pointerEvents: row.active_user === false ? 'none' : '',
+              filter: row.active_user === false ? 'grayscale(1)' : '',
+            }}
           >
             <img src={`${process.env.PUBLIC_URL}/images/pencil-solid.svg`} alt="" />
           </button>
@@ -116,6 +120,10 @@ export default function Staff() {
             onClick={() => {
               toggle('ModalTarget');
               setInfoTarget({ name: row.name, user_seeding: row.code_user });
+            }}
+            style={{
+              pointerEvents: row.active_user === false ? 'none' : '',
+              filter: row.active_user === false ? 'grayscale(1)' : '',
             }}
           >
             <img src={`${process.env.PUBLIC_URL}/images/ellipsis-vertical-solid.svg`} alt="" />

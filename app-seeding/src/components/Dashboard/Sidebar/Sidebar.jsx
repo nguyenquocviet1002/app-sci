@@ -5,11 +5,22 @@ import { useGetUser } from '@/services/userService';
 import { useModal } from '@/hooks/useModal';
 import { MENU_ADMIN, MENU_USER } from '@/utils/MENU';
 
-import sidebarStyles from './Sidebar.module.scss';
 import ModalConfirm from '../ModalConfirm';
 
-export default function Sidebar({ isShow }) {
+import sidebarStyles from './Sidebar.module.scss';
+
+export default function Sidebar({ isShow, event, close }) {
   const [redirect, setRedirect] = useState(false);
+  const [isHover, setIsHover] = useState({
+    0: false,
+    1: false,
+    2: false,
+    3: false,
+    4: false,
+    5: false,
+    6: false,
+    7: false,
+  });
   // eslint-disable-next-line no-unused-vars
   const [token, setToken] = useLocalStorage('token', null);
   const { dataUser, isSuccessUser } = useGetUser(token);
@@ -24,6 +35,12 @@ export default function Sidebar({ isShow }) {
   }, [redirect, navigate]);
   const handelClick = () => {
     setRedirect(true);
+  };
+  const handleMouseEnter = (key) => {
+    setIsHover((prev) => ({ ...prev, [key]: true }));
+  };
+  const handleMouseLeave = (key) => {
+    setIsHover((prev) => ({ ...prev, [key]: false }));
   };
 
   return (
@@ -41,15 +58,50 @@ export default function Sidebar({ isShow }) {
                   <li key={index} className={sidebarStyles['sidebar__navItem']}>
                     <button
                       className={matchActive ? sidebarStyles['active'] : ''}
-                      onClick={() => toggle('ModalConfirm')}
+                      onClick={() => {
+                        close();
+                        toggle('ModalConfirm');
+                      }}
+                      onMouseEnter={() => handleMouseEnter(index)}
+                      onMouseLeave={() => handleMouseLeave(index)}
                     >
+                      <div
+                        className={sidebarStyles['sidebar__icon']}
+                        style={{
+                          backgroundImage: `url(${
+                            isHover[index] || matchActive
+                              ? `${process.env.PUBLIC_URL}/images/${item.iconHover}`
+                              : `${process.env.PUBLIC_URL}/images/${item.icon}`
+                          })`,
+                        }}
+                      ></div>
                       {item.title}
                     </button>
                   </li>
                 ) : (
                   <li key={index} className={sidebarStyles['sidebar__navItem']}>
-                    <NavLink to={item.link} className={({ isActive }) => (isActive ? sidebarStyles['active'] : '')}>
-                      {item.title}
+                    <NavLink
+                      to={item.link}
+                      className={({ isActive }) => (isActive ? sidebarStyles['active'] : '')}
+                      onMouseEnter={() => handleMouseEnter(index)}
+                      onMouseLeave={() => handleMouseLeave(index)}
+                      onClick={close}
+                    >
+                      {({ isActive }) => (
+                        <>
+                          <div
+                            className={sidebarStyles['sidebar__icon']}
+                            style={{
+                              backgroundImage: `url(${
+                                isHover[index] || isActive
+                                  ? `${process.env.PUBLIC_URL}/images/${item.iconHover}`
+                                  : `${process.env.PUBLIC_URL}/images/${item.icon}`
+                              })`,
+                            }}
+                          ></div>
+                          {item.title}
+                        </>
+                      )}
                     </NavLink>
                   </li>
                 ),
@@ -59,21 +111,69 @@ export default function Sidebar({ isShow }) {
                   <li key={index} className={sidebarStyles['sidebar__navItem']}>
                     <button
                       className={matchActive ? sidebarStyles['active'] : ''}
-                      onClick={() => toggle('ModalConfirm')}
+                      onClick={() => {
+                        close();
+                        toggle('ModalConfirm');
+                      }}
+                      onMouseEnter={() => handleMouseEnter(index)}
+                      onMouseLeave={() => handleMouseLeave(index)}
                     >
+                      <div
+                        className={sidebarStyles['sidebar__icon']}
+                        style={{
+                          backgroundImage: `url(${
+                            isHover[index] || matchActive
+                              ? `${process.env.PUBLIC_URL}/images/${item.iconHover}`
+                              : `${process.env.PUBLIC_URL}/images/${item.icon}`
+                          })`,
+                        }}
+                      ></div>
                       {item.title}
                     </button>
                   </li>
                 ) : (
                   <li key={index} className={sidebarStyles['sidebar__navItem']}>
-                    <NavLink to={item.link} className={({ isActive }) => (isActive ? sidebarStyles['active'] : '')}>
-                      {item.title}
+                    <NavLink
+                      to={item.link}
+                      className={({ isActive }) => (isActive ? sidebarStyles['active'] : '')}
+                      onMouseEnter={() => handleMouseEnter(index)}
+                      onMouseLeave={() => handleMouseLeave(index)}
+                      onClick={close}
+                    >
+                      {({ isActive }) => (
+                        <>
+                          <div
+                            className={sidebarStyles['sidebar__icon']}
+                            style={{
+                              backgroundImage: `url(${
+                                isHover[index] || isActive
+                                  ? `${process.env.PUBLIC_URL}/images/${item.iconHover}`
+                                  : `${process.env.PUBLIC_URL}/images/${item.icon}`
+                              })`,
+                            }}
+                          ></div>
+                          {item.title}
+                        </>
+                      )}
                     </NavLink>
                   </li>
                 ),
               )}
         </ul>
+        <div
+          className={sidebarStyles['sidebar__iconMenu']}
+          style={{
+            backgroundImage: `${
+              !isShow
+                ? `url(${process.env.PUBLIC_URL}/images/bars-solid.svg`
+                : `url(${process.env.PUBLIC_URL}/images/xmark-solid.svg`
+            })`,
+          }}
+          onClick={event}
+        ></div>
       </aside>
+      {isShow ? <div className={sidebarStyles['sidebar__bg']} onClick={event}></div> : null}
+
       <ModalConfirm isShowing={isShowing} hide={toggle} element={cpn} onSubmit={handelClick}>
         Bạn có muốn đi tới trang kiểm tra dữ liệu
       </ModalConfirm>

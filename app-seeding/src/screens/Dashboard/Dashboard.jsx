@@ -17,15 +17,19 @@ export default function ScreenDashboard() {
     setIsLayout(!isLayout);
   };
 
+  const closeLayout = () => {
+    setIsLayout(false);
+  };
+
   if (!token) {
     return <Navigate to="/login" />;
   }
 
   return (
     <div className={dashboardStyles['main__layout']}>
-      <Header event={handleLayout} isShow={isLayout} />
-      <Sidebar isShow={isLayout} />
-      <main className={`${dashboardStyles['main__body']} ${isLayout ? dashboardStyles['hide'] : ''}`}>
+      <Header />
+      <Sidebar isShow={isLayout} event={handleLayout} close={closeLayout} />
+      <main className={`${dashboardStyles['main__body']}`}>
         <div className="container-full">
           <div className={dashboardStyles['main__content']}>
             <Outlet />

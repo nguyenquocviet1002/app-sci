@@ -1,13 +1,28 @@
+import { useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
 
 import modalConfirmStyles from './ModalConfirm.module.scss';
 
 export default function ModalConfirm({ isShowing, hide, element, onSubmit, children }) {
+  const ref = useRef(null);
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (ref.current && !ref.current.contains(event.target)) {
+        hide();
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [ref, hide]);
+
   return isShowing && element === 'ModalConfirm'
     ? ReactDOM.createPortal(
         <>
           <div tabIndex="-1" className={modalConfirmStyles['modalConfirm']} aria-modal="true" role="dialog">
-            <div className={modalConfirmStyles['modalConfirm__box']}>
+            <div className={modalConfirmStyles['modalConfirm__box']} ref={ref}>
               <div className={modalConfirmStyles['modalConfirm__divBox']}>
                 <button type="button" className={modalConfirmStyles['modalConfirm__close']} onClick={hide}>
                   <svg aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">

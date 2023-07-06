@@ -17,6 +17,7 @@
     align-items: center;
     &Left {
       display: flex;
+      flex-wrap: wrap;
       button {
         padding: 0.525rem 0.8rem;
       }
@@ -28,7 +29,7 @@
   }
   &__title {
     font-weight: 600;
-    font-size: 20px;
+    font-size: 18px;
   }
   &__filter {
     margin-top: 10px;
@@ -46,7 +47,7 @@
     }
   }
   &__table {
-    padding: 1.125rem;
+    padding: 0 1.125rem;
   }
   &__read {
     color: #452b90;
@@ -99,12 +100,26 @@
     }
   }
   @media (max-width: 768px) {
+    &__head {
+      padding: 1rem 1rem 0.5rem;
+    }
     &__cta {
-      flex-direction: column-reverse;
+      flex-direction: column;
       align-items: flex-start;
       button {
         margin-bottom: 10px;
       }
+      &Search,
+      &Add {
+        margin-left: 0;
+        margin-right: 10px;
+      }
+    }
+    &__removeFilter {
+      margin-right: 10px;
+    }
+    &__title {
+      margin-bottom: 5px;
     }
   }
 }

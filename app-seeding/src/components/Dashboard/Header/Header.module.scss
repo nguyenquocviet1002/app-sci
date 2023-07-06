@@ -18,19 +18,6 @@
     display: flex;
     align-items: center;
   }
-  &__menu {
-    display: none;
-    width: 40px;
-    height: auto;
-    border: none;
-    background-color: transparent;
-    cursor: pointer;
-    img {
-      width: 100%;
-      height: auto;
-      display: block;
-    }
-  }
   &__right {
     height: 100%;
     display: flex;
@@ -72,12 +59,12 @@
     margin-left: 10px;
     &Name {
       font-weight: 600;
-      font-size: 18px;
+      font-size: 16px;
       color: #000;
       margin: 0 10px;
     }
     &Avatar {
-      max-width: 50px;
+      max-width: 45px;
       width: 100%;
       img {
         width: 100%;
@@ -134,12 +121,6 @@
 
   @media (max-width: 1024px) {
     padding-left: 0;
-    &.toggle {
-      padding-left: 15rem;
-    }
-    &__menu {
-      display: block;
-    }
   }
   @media (max-width: 768px) {
     &__cta,

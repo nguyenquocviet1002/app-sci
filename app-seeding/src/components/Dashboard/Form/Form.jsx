@@ -155,9 +155,11 @@ export default function Form() {
           <div className={formStyles['form__title']}>Danh Sách Form</div>
           <div className={formStyles['form__ctaLeft']}>
             {filterSearch ? (
-              <Button event={() => removeFilter()} color="red">
-                Xóa bộ lọc
-              </Button>
+              <div className={formStyles['form__removeFilter']}>
+                <Button event={() => removeFilter()} color="red">
+                  Xóa bộ lọc
+                </Button>
+              </div>
             ) : null}
             <div className={formStyles['form__ctaSearch']}>
               <Button event={() => toggle('ModalSearchForm')} icon="magnifying-glass-solid.svg">
@@ -256,7 +258,9 @@ export default function Form() {
         data={dataLeadItem}
         refetch={refetchForm}
       />
-      <ModalConfirm isShowing={isShowing} hide={toggle} element={cpn} onSubmit={queryRemoveFrom.refetch} />
+      <ModalConfirm isShowing={isShowing} hide={toggle} element={cpn} onSubmit={queryRemoveFrom.refetch}>
+        Bạn có muốn xóa
+      </ModalConfirm>
       <ModalMoreForm isShowing={isShowing} hide={toggle} element={cpn} data={dataLeadItem} />
       <ModalCreateForm isShowing={isShowing} hide={toggle} element={cpn} token={token} refetch={refetchForm} />
     </div>
