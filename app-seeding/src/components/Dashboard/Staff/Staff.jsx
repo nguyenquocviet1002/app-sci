@@ -72,13 +72,22 @@ export default function Staff() {
       maxWidth: '150px',
     },
     {
-      name: 'Tiến trình',
+      name: 'Kết quả',
       selector: (row) => formatMoney(row.kpi_now),
       grow: 0.6,
     },
     {
       name: 'Mục tiêu',
       selector: (row) => formatMoney(row.kpi_target),
+      grow: 0.6,
+    },
+    {
+      name: 'Hoàn thành',
+      selector: (row) => {
+        const kpiTarget = row.kpi_target === 0 ? row.kpi_now : row.kpi_target;
+        const percentSet = ((row.kpi_now / kpiTarget) * 100).toFixed();
+        return percentSet === 'NaN' ? '0%' : `${percentSet}%`;
+      },
       grow: 0.6,
     },
     {

@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
+import { getTokenFn } from '@/api/auth';
 
 import loginStyles from './Login.module.scss';
-import { getTokenFn } from '@/api/auth';
 
 export default function Login() {
   const navigate = useNavigate();

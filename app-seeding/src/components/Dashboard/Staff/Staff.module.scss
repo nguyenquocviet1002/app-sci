@@ -50,6 +50,9 @@
     border: 1px solid #e6e6e6;
     appearance: none;
     transition: all 0.15s ease-in-out;
+    &:focus{
+      border-color: #452B90;
+    }
   }
   &__submit {
     border: 1px solid #452b90;
