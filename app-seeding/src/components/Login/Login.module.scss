@@ -1,34 +1,32 @@
 .signin {
-  max-width: 680px;
+  max-width: 428px;
   width: 100%;
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  padding: 0 15px;
 
   &__box {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column-reverse;
     width: 100%;
     height: 100%;
+    padding: 30px 50px;
+    background-color: #fff;
     border: 1px solid #e5e7eb;
     border-radius: 0.5rem;
     box-shadow: 0 0 3px 1px rgb(204 204 204 / 20%);
   }
 
   &__left {
-    width: 60%;
-    padding: 50px 20px 50px 40px ;
     color: #111827;
-    background-color: #fff;
   }
 
   &__right {
-    width: 40%;
-    padding: 0 40px 0 20px;
-    background-color: #fff;
-    display: flex;
-    align-items: center;
+    width: 60%;
+    margin: auto;
+    padding-bottom: 20px;
     img {
       width: 100%;
       height: auto;
@@ -45,12 +43,13 @@
 
   &__group {
     color: #111827;
-    margin-bottom: 1.5rem;
+    margin-bottom: 15px;
 
     label {
       display: block;
       font-weight: 500;
       margin-bottom: 0.5rem;
+      margin-left: 5px;
     }
 
     input {
@@ -58,9 +57,9 @@
       width: 100%;
       padding: 0.625rem;
       border: 1px solid transparent;
-      border-radius: 0.5rem;
+      border-radius: 20px;
       background-color: #d1d1d1;
-      &:focus{
+      &:focus {
         border-color: #1c628f;
       }
     }
@@ -105,37 +104,27 @@
     color: red;
     font-size: 13px;
   }
-
-  @media (max-width: 768px) {
-    max-width: 460px;
-    &__box{
-      flex-direction: column-reverse;
-    } 
-    &__left, &__right{
-      width: 100%;
-    }
-    &__left{
+  @media (max-width: 414px) {
+    &__box {
       padding: 30px;
     }
-    &__right{
-      padding: 30px 20vw 0;
-    }
-  }
-  @media (max-width: 580px){
-    padding: 0 15px;
   }
 }
 
 .button--signin {
   width: 100%;
-  margin: 0;
+  margin-top: 15px;
   background-color: #1c628f;
-  border-radius: 0.5rem;
+  border-radius: 20px;
   color: #fff;
   font-weight: 500;
-  padding: 0.625rem 1.25rem;
+  padding: 12px 1.25rem;
+  transition: all 0.15s;
+  &:hover {
+    background-color: #5a95b8;
+  }
 }
 
 .error {
-  border-color:  red !important;
+  border-color: red !important;
 }

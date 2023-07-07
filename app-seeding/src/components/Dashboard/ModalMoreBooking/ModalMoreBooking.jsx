@@ -96,53 +96,58 @@ export default function ModalMoreBooking({ isShowing, hide, element, data }) {
                             </div>
                             <span>Booking</span>
                           </div>
-                          <div className="modal__infoContentItem">
-                            <div className="modal__infoLabel">Mã booking:</div>
-                            <div className="modal__infoValue">{data[0].code_booking}</div>
-                          </div>
-                          <div className="modal__infoContentItem">
-                            <div className="modal__infoLabel">Dịch vụ:</div>
-                            <div className="modal__infoValue">
-                              {data[0].line_ids.length !== 0 ? data[0].line_ids.join(', ') : 'Trống'}
+                          <div className="modal__infoContent">
+                            <div className="modal__infoContentItem">
+                              <div className="modal__infoLabel">Mã booking:</div>
+                              <div className="modal__infoValue">{data[0].code_booking}</div>
                             </div>
-                          </div>
-                          <div className="modal__infoContentItem">
-                            <div className="modal__infoLabel">Trạng thái:</div>
-                            <div className="modal__infoValue">{data[0].stage_id}</div>
-                          </div>
-                          <div className="modal__infoContentItem">
-                            <div className="modal__infoLabel">Đơn giá:</div>
-                            <div className="modal__infoValue">
-                              {data[0].dongia
-                                ? data[0].dongia.toLocaleString('it-IT', { style: 'currency', currency: 'VND' })
-                                : '0 VND'}
+                            <div className="modal__infoContentItem">
+                              <div className="modal__infoLabel">Dịch vụ:</div>
+                              <div className="modal__infoValue">
+                                {data[0].line_ids.length !== 0 ? data[0].line_ids.join(', ') : 'Trống'}
+                              </div>
                             </div>
-                          </div>
-                          <div className="modal__infoContentItem">
-                            <div className="modal__infoLabel">Tiền trước giảm:</div>
-                            <div className="modal__infoValue">
-                              {data[0].tien_truoc_giam
-                                ? data[0].tien_truoc_giam.toLocaleString('it-IT', {
-                                    style: 'currency',
-                                    currency: 'VND',
-                                  })
-                                : '0 VND'}
+                            <div className="modal__infoContentItem">
+                              <div className="modal__infoLabel">Trạng thái:</div>
+                              <div className="modal__infoValue">{data[0].stage_id}</div>
                             </div>
-                          </div>
-                          <div className="modal__infoContentItem">
-                            <div className="modal__infoLabel">Tiền phải thu:</div>
-                            <div className="modal__infoValue">
-                              {data[0].tien_phai_thu
-                                ? data[0].tien_phai_thu.toLocaleString('it-IT', { style: 'currency', currency: 'VND' })
-                                : '0 VND'}
+                            <div className="modal__infoContentItem">
+                              <div className="modal__infoLabel">Đơn giá:</div>
+                              <div className="modal__infoValue">
+                                {data[0].dongia
+                                  ? data[0].dongia.toLocaleString('it-IT', { style: 'currency', currency: 'VND' })
+                                  : '0 VND'}
+                              </div>
                             </div>
-                          </div>
-                          <div className="modal__infoContentItem">
-                            <div className="modal__infoLabel">Tiền đã thu:</div>
-                            <div className="modal__infoValue">
-                              {data[0].tien_da_thu
-                                ? data[0].tien_da_thu.toLocaleString('it-IT', { style: 'currency', currency: 'VND' })
-                                : '0 VND'}
+                            <div className="modal__infoContentItem">
+                              <div className="modal__infoLabel">Tiền trước giảm:</div>
+                              <div className="modal__infoValue">
+                                {data[0].tien_truoc_giam
+                                  ? data[0].tien_truoc_giam.toLocaleString('it-IT', {
+                                      style: 'currency',
+                                      currency: 'VND',
+                                    })
+                                  : '0 VND'}
+                              </div>
+                            </div>
+                            <div className="modal__infoContentItem">
+                              <div className="modal__infoLabel">Tiền phải thu:</div>
+                              <div className="modal__infoValue">
+                                {data[0].tien_phai_thu
+                                  ? data[0].tien_phai_thu.toLocaleString('it-IT', {
+                                      style: 'currency',
+                                      currency: 'VND',
+                                    })
+                                  : '0 VND'}
+                              </div>
+                            </div>
+                            <div className="modal__infoContentItem">
+                              <div className="modal__infoLabel">Tiền đã thu:</div>
+                              <div className="modal__infoValue">
+                                {data[0].tien_da_thu
+                                  ? data[0].tien_da_thu.toLocaleString('it-IT', { style: 'currency', currency: 'VND' })
+                                  : '0 VND'}
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -159,17 +164,19 @@ export default function ModalMoreBooking({ isShowing, hide, element, data }) {
                           </div>
                           <span>Thương hiệu</span>
                         </div>
-                        <div className="modal__infoContentItem">
-                          <div className="modal__infoLabel modal__infoLabel--1">Thương hiệu:</div>
-                          <div className="modal__infoValue">{data[0].brand}</div>
-                        </div>
-                        <div className="modal__infoContentItem">
-                          <div className="modal__infoLabel modal__infoLabel--1">Chi nhánh:</div>
-                          <div className="modal__infoValue">{data[0].company}</div>
-                        </div>
-                        <div className="modal__infoContentItem">
-                          <div className="modal__infoLabel modal__infoLabel--1">Ghi chú:</div>
-                          <div className="modal__infoValue">{data[0].note ? data[0].note : 'Trống'}</div>
+                        <div className="modal__infoContent">
+                          <div className="modal__infoContentItem">
+                            <div className="modal__infoLabel modal__infoLabel--1">Thương hiệu:</div>
+                            <div className="modal__infoValue">{data[0].brand}</div>
+                          </div>
+                          <div className="modal__infoContentItem">
+                            <div className="modal__infoLabel modal__infoLabel--1">Chi nhánh:</div>
+                            <div className="modal__infoValue">{data[0].company}</div>
+                          </div>
+                          <div className="modal__infoContentItem">
+                            <div className="modal__infoLabel modal__infoLabel--1">Ghi chú:</div>
+                            <div className="modal__infoValue">{data[0].note ? data[0].note : 'Trống'}</div>
+                          </div>
                         </div>
                       </div>
                     </div>

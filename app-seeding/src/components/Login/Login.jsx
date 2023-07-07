@@ -51,7 +51,7 @@ export default function Login() {
     <div className={loginStyles['signin']}>
       <div className={loginStyles['signin__box']}>
         <div className={loginStyles['signin__left']}>
-          <div className={loginStyles['signin__title']}>Đăng nhập</div>
+          <div className={loginStyles['signin__title']}>Quản trị Seeding</div>
           {validate.status ? <p className={loginStyles['signin__error']}>{validate.message}</p> : ''}
           <div className={loginStyles['signin__group']}>
             <label htmlFor="phone-number">Số điện thoại</label>
