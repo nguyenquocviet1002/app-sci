@@ -40,6 +40,9 @@ export default function ModalCreateForm({ isShowing, hide, element, token, refet
   const handleChange = (name) => (event) => {
     setInfo((prev) => ({ ...prev, [name]: event.target.value }));
   };
+  const handleChangePhone = (name) => (event) => {
+    setInfo((prev) => ({ ...prev, [name]: event.target.value.replace(/\s/g, '') }));
+  };
 
   const queryCreateForm = useQuery({
     queryKey: ['createForm'],
@@ -143,7 +146,7 @@ export default function ModalCreateForm({ isShowing, hide, element, token, refet
                               id="phone"
                               className="modal__input"
                               value={info.phone}
-                              onChange={handleChange('phone')}
+                              onChange={handleChangePhone('phone')}
                             />
                           </div>
                         </div>
