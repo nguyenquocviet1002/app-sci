@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
 
-export default function ModalMoreForm({ isShowing, hide, element, data }) {
+export default function ModalMoreForm({ isShowing, hide, element, data, rule }) {
   const ref = useRef(null);
   useEffect(() => {
     function handleClickOutside(event) {
@@ -127,6 +127,16 @@ export default function ModalMoreForm({ isShowing, hide, element, data }) {
                             disabled
                           />
                         </div>
+                        {rule === 'admin' && (
+                          <div className="modal__formGroup">
+                            <label htmlFor="time" className="modal__label">
+                              Ticket Caresoft
+                            </label>
+                            <a className="modal__link" href={data[0].link_url} target="_blank" rel="noreferrer">
+                              {data[0].link_url ? data[0].link_url : 'Trống'}
+                            </a>
+                          </div>
+                        )}
                       </div>
                       <div className="modal__formControl" style={{ marginTop: '15px' }}>
                         <div className="modal__formGroup modal__formGroup--single">

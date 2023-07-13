@@ -241,14 +241,23 @@ export default function Form() {
         </div>
       )}
       {isSuccessUser && (
-        <ModalSearchForm
-          isShowing={isShowing}
-          hide={toggle}
-          element={cpn}
-          token={token}
-          show={showFilter}
-          rule={dataUser.data.data.rule}
-        />
+        <>
+          <ModalSearchForm
+            isShowing={isShowing}
+            hide={toggle}
+            element={cpn}
+            token={token}
+            show={showFilter}
+            rule={dataUser.data.data.rule}
+          />
+          <ModalMoreForm
+            isShowing={isShowing}
+            hide={toggle}
+            element={cpn}
+            data={dataLeadItem}
+            rule={dataUser.data.data.rule}
+          />
+        </>
       )}
       <ModalUpdateForm
         isShowing={isShowing}
@@ -261,7 +270,6 @@ export default function Form() {
       <ModalConfirm isShowing={isShowing} hide={toggle} element={cpn} onSubmit={queryRemoveFrom.refetch}>
         Bạn có muốn xóa
       </ModalConfirm>
-      <ModalMoreForm isShowing={isShowing} hide={toggle} element={cpn} data={dataLeadItem} />
       <ModalCreateForm isShowing={isShowing} hide={toggle} element={cpn} token={token} refetch={refetchForm} />
     </div>
   );
