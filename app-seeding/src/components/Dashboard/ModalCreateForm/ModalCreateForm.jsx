@@ -52,7 +52,15 @@ export default function ModalCreateForm({ isShowing, hide, element, token, refet
   });
 
   const handleSubmit = () => {
-    queryCreateForm.refetch();
+    if (!info.name || !info.phone || !info.service || !info.company_id) {
+      alert('Vui lòng nhập đầy đủ các trường bắt buộc!!!');
+    } else {
+      queryCreateForm.refetch();
+      hide();
+      setInfo(initialInfo);
+      setValueCompany('');
+      setCompanyFilter(company);
+    }
   };
 
   const handleValue = (e) => {
@@ -127,7 +135,7 @@ export default function ModalCreateForm({ isShowing, hide, element, token, refet
                         <div className="modal__formControl">
                           <div className="modal__formGroup">
                             <label htmlFor="name" className="modal__label">
-                              Họ tên
+                              Họ tên <span style={{ color: 'red' }}>(*)</span>
                             </label>
                             <input
                               type="text"
@@ -139,7 +147,7 @@ export default function ModalCreateForm({ isShowing, hide, element, token, refet
                           </div>
                           <div className="modal__formGroup">
                             <label htmlFor="phone" className="modal__label">
-                              Số điện thoại
+                              Số điện thoại <span style={{ color: 'red' }}>(*)</span>
                             </label>
                             <input
                               type="text"
@@ -152,34 +160,8 @@ export default function ModalCreateForm({ isShowing, hide, element, token, refet
                         </div>
                         <div className="modal__formControl" style={{ marginTop: '15px' }}>
                           <div className="modal__formGroup">
-                            <label htmlFor="name-fb" className="modal__label">
-                              Tên FB
-                            </label>
-                            <input
-                              type="text"
-                              id="name-fb"
-                              className="modal__input"
-                              value={info.name_fb}
-                              onChange={handleChange('name_fb')}
-                            />
-                          </div>
-                          <div className="modal__formGroup">
-                            <label htmlFor="link-fb" className="modal__label">
-                              Link FB
-                            </label>
-                            <input
-                              type="text"
-                              id="link-fb"
-                              className="modal__input"
-                              value={info.link_fb}
-                              onChange={handleChange('link_fb')}
-                            />
-                          </div>
-                        </div>
-                        <div className="modal__formControl" style={{ marginTop: '15px' }}>
-                          <div className="modal__formGroup">
                             <label htmlFor="service" className="modal__label">
-                              Dịch vụ
+                              Dịch vụ <span style={{ color: 'red' }}>(*)</span>
                             </label>
                             <input
                               type="text"
@@ -191,7 +173,7 @@ export default function ModalCreateForm({ isShowing, hide, element, token, refet
                           </div>
                           <div className="modal__formGroup">
                             <label htmlFor="company" className="modal__label">
-                              Chi nhánh
+                              Chi nhánh <span style={{ color: 'red' }}>(*)</span>
                             </label>
                             <input
                               type="text"
@@ -223,6 +205,32 @@ export default function ModalCreateForm({ isShowing, hide, element, token, refet
                                 </li>
                               ))}
                             </ul>
+                          </div>
+                        </div>
+                        <div className="modal__formControl" style={{ marginTop: '15px' }}>
+                          <div className="modal__formGroup">
+                            <label htmlFor="name-fb" className="modal__label">
+                              Tên FB
+                            </label>
+                            <input
+                              type="text"
+                              id="name-fb"
+                              className="modal__input"
+                              value={info.name_fb}
+                              onChange={handleChange('name_fb')}
+                            />
+                          </div>
+                          <div className="modal__formGroup">
+                            <label htmlFor="link-fb" className="modal__label">
+                              Link FB
+                            </label>
+                            <input
+                              type="text"
+                              id="link-fb"
+                              className="modal__input"
+                              value={info.link_fb}
+                              onChange={handleChange('link_fb')}
+                            />
                           </div>
                         </div>
                         <div className="modal__formControl" style={{ marginTop: '15px' }}>
@@ -269,10 +277,6 @@ export default function ModalCreateForm({ isShowing, hide, element, token, refet
                           <Button
                             event={() => {
                               handleSubmit();
-                              hide();
-                              setInfo(initialInfo);
-                              setValueCompany('');
-                              setCompanyFilter(company);
                             }}
                           >
                             Thêm mới
