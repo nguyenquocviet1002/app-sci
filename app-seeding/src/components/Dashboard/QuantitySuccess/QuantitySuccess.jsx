@@ -98,11 +98,16 @@ export default function QuantitySuccess() {
         .then((data) => setDataSuccessService(data.so_luong))
         .catch((err) => console.log(err));
     } else {
-      const curr = new Date();
-      const first = curr.getDate() - curr.getDay() + 1;
-      const last = first + 6;
-      const firstDay = new Date(curr.setDate(first));
-      const lastDay = new Date(curr.setDate(last));
+      const today = new Date();
+      function getFirstDayOfWeek(d) {
+        const date = new Date(d);
+        const day = date.getDay();
+        const diff = date.getDate() - day + (day === 0 ? -6 : 1);
+        return new Date(date.setDate(diff));
+      }
+      const firstDay = getFirstDayOfWeek(today);
+      const lastDay = new Date(firstDay);
+      lastDay.setDate(lastDay.getDate() + 6);
       if (dataUser) {
         getSuccessByBrand(firstDay, lastDay, token, user.value)
           .then((data) =>
