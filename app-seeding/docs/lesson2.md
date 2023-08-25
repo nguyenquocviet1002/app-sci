@@ -38,6 +38,15 @@
 
 - Sử dụng thư viện Tanstack Query để xử lý api
 
+```sh
+ Sử dụng hook useQuery để xử lý việc gọi api bằng phương thức get
+ Hai tham số cần phải có là queryKey và queryFn
+    - queryKey: định nghĩa tên cho api đó
+    - queryFn: function call api, là 1 function bất kì có thể trả về promise
+ Enabled: false cho phép hoãn api không tự động call
+ onSuccess: sau khi hoàn thành các bước call api và trả ra data sẽ thực thi đoạn code trong onSuccess
+```
+
 - Dựa vào data trả về để xử lý validate cho website
 
 - Sau khi đăng nhập thành công -> set token vào local storage -> redirect link sang trang dashboard
@@ -49,6 +58,8 @@
 <img src="https://i.imgur.com/hlBsrcr.png">
 
 <img src="https://i.imgur.com/wKZOjgl.png">
+
+---
 
 ### 1.2. Đăng xuất
 
@@ -65,6 +76,8 @@
 - Function logout: xóa local storage -> redirect sang trang login
 
 <img src="https://i.imgur.com/5tCdw8T.png">
+
+---
 
 ### 1.3. Đổi mật khẩu
 
